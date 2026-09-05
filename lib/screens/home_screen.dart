@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../data/news_data.dart';
-import '../../models/news_model.dart';
-import '../../widgets/app_bar.dart';
-import '../../widgets/bottom_nav_bar.dart';
-import '../../widgets/category_chip.dart';
-import '../../widgets/featured_news.dart';
-import '../../widgets/news_card.dart';
+import '../data/news_data.dart';
+import '../models/news_model.dart';
+import '../widgets/app_bar.dart';
+import '../widgets/category_chip.dart';
+import '../widgets/featured_news.dart';
+import '../widgets/news_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState>();
 
   int selectedCategory = 0;
-  int selectedBottomNav = 0;
 
   final List<String> categories = [
     'All',
@@ -49,15 +47,20 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
 
+      // App Bar
       appBar: AppBarWidget(
         onMenuPressed: () {
           _scaffoldKey.currentState?.openDrawer();
         },
-        onSearchPressed: () {},
+        onSearchPressed: () {
+          // Search will be added later
+        },
       ),
 
+      // Side Drawer
       drawer: _buildDrawer(),
 
+      // Home Content
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
@@ -90,17 +93,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: selectedBottomNav,
-        onDestinationSelected: (index) {
-          setState(() {
-            selectedBottomNav = index;
-          });
-        },
-      ),
     );
   }
+
+  // ----------------------------------------------------------
+  // Greeting
+  // ----------------------------------------------------------
 
   Widget _buildGreeting() {
     return const Column(
@@ -113,7 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.grey,
           ),
         ),
+
         SizedBox(height: 5),
+
         Text(
           'What’s happening today?',
           style: TextStyle(
@@ -124,6 +124,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
+
+  // ----------------------------------------------------------
+  // Categories
+  // ----------------------------------------------------------
 
   Widget _buildCategories() {
     return SizedBox(
@@ -146,7 +150,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // ----------------------------------------------------------
+  // Featured News
+  // ----------------------------------------------------------
+
   Widget _buildFeaturedSection() {
+    if (NewsData.news.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final featuredNews = NewsData.news.first;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,20 +171,19 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         const SizedBox(height: 15),
-        const FeaturedNews(
-          news: NewsModel(
-            category: 'Technology',
-            title: 'The Future of Technology Is Changing Fast',
-            description:
-            'Discover the latest technology stories and innovations happening around the world.',
-            time: '2 hours ago',
-            image: 'assets/images/technology.jpg',
-          ),
+
+        FeaturedNews(
+          news: featuredNews,
         ),
       ],
     );
   }
+
+  // ----------------------------------------------------------
+  // Latest News Header
+  // ----------------------------------------------------------
 
   Widget _buildLatestNewsHeader() {
     return Row(
@@ -183,26 +196,59 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         TextButton(
-          onPressed: () {},
-          child: const Text('See all'),
+          onPressed: () {
+            setState(() {
+              selectedCategory = 0;
+            });
+          },
+          child: const Text(
+            'See all',
+          ),
         ),
       ],
     );
   }
 
+  // ----------------------------------------------------------
+  // News List
+  // ----------------------------------------------------------
+
   Widget _buildNewsList() {
+    if (filteredNews.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 40),
+        child: Center(
+          child: Text(
+            'No news found',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      );
+    }
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: filteredNews.length,
       itemBuilder: (context, index) {
+        final news = filteredNews[index];
+
         return NewsCard(
-          news: filteredNews[index],
+          key: ValueKey(news.title),
+          news: news,
         );
       },
     );
   }
+
+  // ----------------------------------------------------------
+  // Drawer
+  // ----------------------------------------------------------
 
   Widget _buildDrawer() {
     return Drawer(
@@ -220,23 +266,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+
             ListTile(
-              leading: const Icon(Icons.home_outlined),
-              title: const Text('Home'),
+              leading: const Icon(
+                Icons.home_outlined,
+              ),
+              title: const Text(
+                'Home',
+              ),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
+
             ListTile(
-              leading: const Icon(Icons.bookmark_outline),
-              title: const Text('Saved'),
+              leading: const Icon(
+                Icons.bookmark_outline,
+              ),
+              title: const Text(
+                'Saved',
+              ),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
+
             ListTile(
-              leading: const Icon(Icons.settings_outlined),
-              title: const Text('Settings'),
+              leading: const Icon(
+                Icons.settings_outlined,
+              ),
+              title: const Text(
+                'Settings',
+              ),
               onTap: () {
                 Navigator.pop(context);
               },

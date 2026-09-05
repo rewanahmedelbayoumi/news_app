@@ -15,19 +15,22 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int selectedIndex = 0;
 
-  final List<Widget> screens = const [
-    HomeScreen(),
-    SavedScreen(),
-    ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: selectedIndex,
-        children: screens,
+        children: [
+          const HomeScreen(),
+
+          SavedScreen(
+            key: ValueKey(selectedIndex == 1),
+          ),
+
+          const ProfileScreen(),
+        ],
       ),
+
       bottomNavigationBar: BottomNavBar(
         selectedIndex: selectedIndex,
         onDestinationSelected: (index) {

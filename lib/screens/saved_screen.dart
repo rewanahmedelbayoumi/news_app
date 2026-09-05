@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 
-class SavedScreen extends StatelessWidget {
+import '../services/saved_news_service.dart';
+import '../widgets/news_card.dart';
+
+class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key});
 
   @override
+  State<SavedScreen> createState() => _SavedScreenState();
+}
+
+class _SavedScreenState extends State<SavedScreen> {
+  @override
   Widget build(BuildContext context) {
+    final savedNews = SavedNewsService.savedNews;
+
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        surfaceTintColor: Colors.white,
         title: const Text(
           'Saved',
           style: TextStyle(
@@ -20,62 +32,64 @@ class SavedScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: ListView(
+
+      body: savedNews.isEmpty
+          ? _buildEmptyState()
+          : ListView.builder(
         padding: const EdgeInsets.all(20),
-        children: [
-          const Text(
-            'Your Saved News',
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        itemCount: savedNews.length,
+        itemBuilder: (context, index) {
+          return NewsCard(
+            key: ValueKey(savedNews[index].title),
+            news: savedNews[index],
+          );
+        },
+      ),
+    );
+  }
 
-          const SizedBox(height: 8),
-
-          const Text(
-            'Articles you saved for later will appear here.',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(25),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.bookmark_outline,
+                size: 55,
+                color: Colors.grey,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 40),
+            const SizedBox(height: 25),
 
-          Container(
-            padding: const EdgeInsets.all(30),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(20),
+            const Text(
+              'No Saved News',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            child: const Column(
-              children: [
-                Icon(
-                  Icons.bookmark_outline,
-                  size: 60,
-                  color: Colors.grey,
-                ),
-                SizedBox(height: 15),
-                Text(
-                  'No Saved News',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Save articles you want to read later.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+
+            const SizedBox(height: 10),
+
+            const Text(
+              'Save articles you want to read later.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import '../models/news_model.dart';
 
-class NewsCard extends StatelessWidget {
+import '../models/news_model.dart';
+import '../services/saved_news_service.dart';
+
+class NewsCard extends StatefulWidget {
   final NewsModel news;
 
   const NewsCard({
@@ -10,7 +12,14 @@ class NewsCard extends StatelessWidget {
   });
 
   @override
+  State<NewsCard> createState() => _NewsCardState();
+}
+
+class _NewsCardState extends State<NewsCard> {
+  @override
   Widget build(BuildContext context) {
+    final isSaved = SavedNewsService.isSaved(widget.news);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
       child: Row(
@@ -19,7 +28,7 @@ class NewsCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: Image.asset(
-              news.image,
+              widget.news.image,
               width: 110,
               height: 110,
               fit: BoxFit.cover,
@@ -37,22 +46,50 @@ class NewsCard extends StatelessWidget {
               },
             ),
           ),
+
           const SizedBox(width: 15),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  news.category.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.news.category.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          SavedNewsService.toggleSaved(widget.news);
+                        });
+                      },
+                      icon: Icon(
+                        isSaved
+                            ? Icons.bookmark
+                            : Icons.bookmark_outline,
+                        color: isSaved
+                            ? Colors.black
+                            : Colors.grey,
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
                 ),
+
                 const SizedBox(height: 5),
+
                 Text(
-                  news.title,
+                  widget.news.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -60,9 +97,11 @@ class NewsCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
                 const SizedBox(height: 5),
+
                 Text(
-                  news.description,
+                  widget.news.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -70,9 +109,11 @@ class NewsCard extends StatelessWidget {
                     color: Colors.grey,
                   ),
                 ),
+
                 const SizedBox(height: 7),
+
                 Text(
-                  news.time,
+                  widget.news.time,
                   style: const TextStyle(
                     fontSize: 11,
                     color: Colors.grey,
