@@ -23,17 +23,13 @@ class CategoryChip extends StatelessWidget {
           vertical: 12,
         ),
         decoration: BoxDecoration(
-          color: isSelected
-              ? Colors.black
-              : Colors.grey.shade100,
+          color: isSelected ? Colors.black : Colors.grey.shade100,
           borderRadius: BorderRadius.circular(25),
         ),
         child: Text(
           title,
           style: TextStyle(
-            color: isSelected
-                ? Colors.white
-                : Colors.black,
+            color: isSelected ? Colors.white : Colors.black,
             fontWeight: FontWeight.w600,
           ),
         ),

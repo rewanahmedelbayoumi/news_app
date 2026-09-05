@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
+import '../models/news_model.dart';
 
 class NewsCard extends StatelessWidget {
-  final String category;
-  final String title;
-  final String description;
-  final String time;
+  final NewsModel news;
 
   const NewsCard({
     super.key,
-    required this.category,
-    required this.title,
-    required this.description,
-    required this.time,
+    required this.news,
   });
 
   @override
@@ -21,41 +16,43 @@ class NewsCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // News Image
-          Container(
-            width: 110,
-            height: 110,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: const Icon(
-              Icons.image_outlined,
-              size: 35,
-              color: Colors.grey,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.asset(
+              news.image,
+              width: 110,
+              height: 110,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 110,
+                  height: 110,
+                  color: Colors.grey.shade200,
+                  child: const Icon(
+                    Icons.image_outlined,
+                    size: 35,
+                    color: Colors.grey,
+                  ),
+                );
+              },
             ),
           ),
-
           const SizedBox(width: 15),
-
-          // News Information
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  category.toUpperCase(),
+                  news.category.toUpperCase(),
                   style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: Colors.grey,
                   ),
                 ),
-
                 const SizedBox(height: 5),
-
                 Text(
-                  title,
+                  news.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -63,11 +60,9 @@ class NewsCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 5),
-
                 Text(
-                  description,
+                  news.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -75,11 +70,9 @@ class NewsCard extends StatelessWidget {
                     color: Colors.grey,
                   ),
                 ),
-
                 const SizedBox(height: 7),
-
                 Text(
-                  time,
+                  news.time,
                   style: const TextStyle(
                     fontSize: 11,
                     color: Colors.grey,
