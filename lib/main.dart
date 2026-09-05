@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/home_screen.dart';
+import 'screens/main_screen.dart';
 
 void main() {
   runApp(const NewsApp());
@@ -17,7 +17,7 @@ class NewsApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const HomeScreen(),
+      home: const MainScreen(),
     );
   }
 }

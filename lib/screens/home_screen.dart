@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../data/news_data.dart';
-import '../models/news_model.dart';
-import '../widgets/app_bar.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../widgets/category_chip.dart';
-import '../widgets/featured_news.dart';
-import '../widgets/news_card.dart';
+import '../../data/news_data.dart';
+import '../../models/news_model.dart';
+import '../../widgets/app_bar.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/category_chip.dart';
+import '../../widgets/featured_news.dart';
+import '../../widgets/news_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
