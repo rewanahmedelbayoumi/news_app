@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/news_data.dart';
 import '../models/news_model.dart';
 import '../services/auth_service.dart';
+import '../services/language_service.dart';
 import '../services/theme_service.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/category_chip.dart';
@@ -16,11 +17,13 @@ import 'settings_screen.dart';
 class HomeScreen extends StatefulWidget {
   final AuthService? authService;
   final ThemeService? themeService;
+  final LanguageService? languageService;
 
   const HomeScreen({
     super.key,
     this.authService,
     this.themeService,
+    this.languageService,
   });
 
   @override
@@ -58,6 +61,27 @@ class _HomeScreenState extends State<HomeScreen> {
     return widget.authService?.isLoggedIn ?? false;
   }
 
+  String translate(String key) {
+    return widget.languageService?.translate(key) ?? key;
+  }
+
+  String translateCategory(String category) {
+    switch (category) {
+      case 'All':
+        return translate('all');
+      case 'Business':
+        return translate('business');
+      case 'Sports':
+        return translate('sports');
+      case 'Technology':
+        return translate('technology');
+      case 'Health':
+        return translate('health');
+      default:
+        return category;
+    }
+  }
+
   void _openLogin() {
     final authService = widget.authService;
 
@@ -70,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (_) => LoginScreen(
           authService: authService,
+          languageService: widget.languageService,
         ),
       ),
     );
@@ -87,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (_) => RegisterScreen(
           authService: authService,
+          languageService: widget.languageService,
         ),
       ),
     );
@@ -106,6 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (_) => SavedScreen(
           authService: widget.authService!,
+          languageService: widget.languageService!,
         ),
       ),
     );
@@ -114,7 +141,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void _openSettings() {
     Navigator.pop(context);
 
-    if (widget.themeService == null) {
+    final themeService = widget.themeService;
+    final languageService = widget.languageService;
+
+    if (themeService == null || languageService == null) {
       return;
     }
 
@@ -122,7 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => SettingsScreen(
-          themeService: widget.themeService!,
+          themeService: themeService,
+          languageService: languageService,
         ),
       ),
     );
@@ -160,9 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
@@ -176,31 +205,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: colorScheme.onSurface,
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 Text(
-                  'Login Required',
+                  translate('login_required'),
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
-                  'Login or create an account to access your saved news.',
+                  translate('login_or_register'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: colorScheme.onSurfaceVariant,
                     fontSize: 14,
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -209,18 +232,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.pop(context);
                       _openLogin();
                     },
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
+                    child: Text(
+                      translate('login'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -229,16 +250,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.pop(context);
                       _openRegister();
                     },
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
+                    child: Text(
+                      translate('register'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
               ],
             ),
@@ -255,18 +275,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-
       backgroundColor: theme.scaffoldBackgroundColor,
-
       appBar: AppBarWidget(
+        languageService: widget.languageService!,
         onMenuPressed: () {
           _scaffoldKey.currentState?.openDrawer();
         },
         onSearchPressed: () {},
       ),
-
       drawer: _buildDrawer(colorScheme),
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
@@ -281,25 +298,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildLoginMessage(colorScheme),
                 const SizedBox(height: 20),
               ],
-
               _buildGreeting(colorScheme),
-
               const SizedBox(height: 25),
-
               _buildCategories(),
-
               const SizedBox(height: 30),
-
               _buildFeaturedSection(colorScheme),
-
               const SizedBox(height: 30),
-
               _buildLatestNewsHeader(colorScheme),
-
               const SizedBox(height: 10),
-
               _buildNewsList(colorScheme),
-
               const SizedBox(height: 20),
             ],
           ),
@@ -308,7 +315,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Login/Register message shown to guest users.
   Widget _buildLoginMessage(ColorScheme colorScheme) {
     return Container(
       width: double.infinity,
@@ -331,42 +337,36 @@ class _HomeScreenState extends State<HomeScreen> {
               size: 22,
             ),
           ),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment:
               CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Get the full News experience',
+                  translate('get_full_experience'),
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
-                  'Login or register to save and read articles.',
+                  translate('login_to_save_read'),
                   style: TextStyle(
                     color:
                     colorScheme.onSurfaceVariant,
                     fontSize: 11,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Row(
                   children: [
                     GestureDetector(
                       onTap: _openLogin,
                       child: Text(
-                        'Login',
+                        translate('login'),
                         style: TextStyle(
                           color: colorScheme.onSurface,
                           fontSize: 12,
@@ -376,13 +376,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(width: 15),
-
                     GestureDetector(
                       onTap: _openRegister,
                       child: Text(
-                        'Register',
+                        translate('register'),
                         style: TextStyle(
                           color: colorScheme.onSurface,
                           fontSize: 12,
@@ -402,24 +400,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Greeting section.
   Widget _buildGreeting(ColorScheme colorScheme) {
     return Column(
       crossAxisAlignment:
       CrossAxisAlignment.start,
       children: [
         Text(
-          'Good Morning 👋',
+          translate('good_morning'),
           style: TextStyle(
             fontSize: 16,
             color: colorScheme.onSurfaceVariant,
           ),
         ),
-
         const SizedBox(height: 5),
-
         Text(
-          'What’s happening today?',
+          translate('whats_happening_today'),
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 25,
@@ -430,7 +425,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Category filter section.
   Widget _buildCategories() {
     return SizedBox(
       height: 45,
@@ -439,7 +433,8 @@ class _HomeScreenState extends State<HomeScreen> {
         itemCount: categories.length,
         itemBuilder: (context, index) {
           return CategoryChip(
-            title: categories[index],
+            title:
+            translateCategory(categories[index]),
             isSelected:
             selectedCategory == index,
             onTap: () {
@@ -453,7 +448,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Featured news section.
   Widget _buildFeaturedSection(
       ColorScheme colorScheme,
       ) {
@@ -468,25 +462,23 @@ class _HomeScreenState extends State<HomeScreen> {
       CrossAxisAlignment.start,
       children: [
         Text(
-          'Featured News',
+          translate('featured_news'),
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 21,
             fontWeight: FontWeight.bold,
           ),
         ),
-
         const SizedBox(height: 15),
-
         FeaturedNews(
           news: featuredNews,
           authService: widget.authService,
+          languageService: widget.languageService,
         ),
       ],
     );
   }
 
-  // Latest news header.
   Widget _buildLatestNewsHeader(
       ColorScheme colorScheme,
       ) {
@@ -495,14 +487,13 @@ class _HomeScreenState extends State<HomeScreen> {
       MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Latest News',
+          translate('latest_news'),
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 21,
             fontWeight: FontWeight.bold,
           ),
         ),
-
         TextButton(
           onPressed: () {
             setState(() {
@@ -510,7 +501,7 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           },
           child: Text(
-            'See all',
+            translate('see_all'),
             style: TextStyle(
               color: colorScheme.onSurface,
             ),
@@ -520,7 +511,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // News list section.
   Widget _buildNewsList(
       ColorScheme colorScheme,
       ) {
@@ -531,7 +521,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: Center(
           child: Text(
-            'No news found',
+            translate('no_news_found'),
             style: TextStyle(
               color:
               colorScheme.onSurfaceVariant,
@@ -554,12 +544,12 @@ class _HomeScreenState extends State<HomeScreen> {
           key: ValueKey(news.title),
           news: news,
           authService: widget.authService,
+          languageService: widget.languageService,
         );
       },
     );
   }
 
-  // Side drawer.
   Widget _buildDrawer(
       ColorScheme colorScheme,
       ) {
@@ -571,7 +561,7 @@ class _HomeScreenState extends State<HomeScreen> {
             DrawerHeader(
               child: Center(
                 child: Text(
-                  'News',
+                  translate('news'),
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontSize: 28,
@@ -580,14 +570,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-
             ListTile(
               leading: Icon(
                 Icons.home_outlined,
                 color: colorScheme.onSurface,
               ),
               title: Text(
-                'Home',
+                translate('home'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                 ),
@@ -596,37 +585,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
               leading: Icon(
                 Icons.bookmark_outline,
                 color: colorScheme.onSurface,
               ),
               title: Text(
-                'Saved',
+                translate('saved'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                 ),
               ),
               onTap: _openSaved,
             ),
-
             ListTile(
               leading: Icon(
                 Icons.settings_outlined,
                 color: colorScheme.onSurface,
               ),
               title: Text(
-                'Settings',
+                translate('settings'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                 ),
               ),
               onTap: _openSettings,
             ),
-
             const Spacer(),
-
             if (!isLoggedIn) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -640,18 +625,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.pop(context);
                       _openLogin();
                     },
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
+                    child: Text(
+                      translate('login'),
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
               ),
-
               const SizedBox(height: 10),
-
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -664,16 +647,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.pop(context);
                       _openRegister();
                     },
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
+                    child: Text(
+                      translate('register'),
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
             ],
           ],

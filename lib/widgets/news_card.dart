@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/news_model.dart';
 import '../services/auth_service.dart';
+import '../services/language_service.dart';
 import '../services/saved_news_service.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
@@ -10,11 +11,13 @@ import '../screens/news_details_screen.dart';
 class NewsCard extends StatefulWidget {
   final NewsModel news;
   final AuthService? authService;
+  final LanguageService? languageService;
 
   const NewsCard({
     super.key,
     required this.news,
     this.authService,
+    this.languageService,
   });
 
   @override
@@ -24,6 +27,25 @@ class NewsCard extends StatefulWidget {
 class _NewsCardState extends State<NewsCard> {
   bool get isLoggedIn {
     return widget.authService?.isLoggedIn ?? false;
+  }
+
+  String translate(String key) {
+    return widget.languageService?.translate(key) ?? key;
+  }
+
+  String translateCategory(String category) {
+    switch (category) {
+      case 'Business':
+        return translate('business');
+      case 'Sports':
+        return translate('sports');
+      case 'Technology':
+        return translate('technology');
+      case 'Health':
+        return translate('health');
+      default:
+        return category;
+    }
   }
 
   void _openLogin() {
@@ -38,6 +60,7 @@ class _NewsCardState extends State<NewsCard> {
       MaterialPageRoute(
         builder: (_) => LoginScreen(
           authService: authService,
+          languageService: widget.languageService,
         ),
       ),
     );
@@ -55,6 +78,7 @@ class _NewsCardState extends State<NewsCard> {
       MaterialPageRoute(
         builder: (_) => RegisterScreen(
           authService: authService,
+          languageService: widget.languageService,
         ),
       ),
     );
@@ -92,14 +116,11 @@ class _NewsCardState extends State<NewsCard> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color:
-                    colorScheme.surfaceContainerHighest,
+                    color: colorScheme.surfaceContainerHighest,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -108,31 +129,25 @@ class _NewsCardState extends State<NewsCard> {
                     color: colorScheme.onSurface,
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 Text(
-                  'Login Required',
+                  translate('login_required'),
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
-                  'Login or create an account to read and save news articles.',
+                  translate('login_or_register'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: colorScheme.onSurfaceVariant,
                     fontSize: 14,
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -141,18 +156,16 @@ class _NewsCardState extends State<NewsCard> {
                       Navigator.pop(context);
                       _openLogin();
                     },
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
+                    child: Text(
+                      translate('login'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -161,16 +174,15 @@ class _NewsCardState extends State<NewsCard> {
                       Navigator.pop(context);
                       _openRegister();
                     },
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
+                    child: Text(
+                      translate('register'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
               ],
             ),
@@ -191,6 +203,7 @@ class _NewsCardState extends State<NewsCard> {
       MaterialPageRoute(
         builder: (_) => NewsDetailsScreen(
           news: widget.news,
+          languageService: widget.languageService,
         ),
       ),
     );
@@ -219,7 +232,6 @@ class _NewsCardState extends State<NewsCard> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // News image.
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image.asset(
@@ -235,43 +247,35 @@ class _NewsCardState extends State<NewsCard> {
                   return Container(
                     width: 110,
                     height: 110,
-                    color:
-                    colorScheme.surfaceContainerHighest,
+                    color: colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.image_outlined,
                       size: 35,
-                      color:
-                      colorScheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   );
                 },
               ),
             ),
-
             const SizedBox(width: 15),
-
-            // News content.
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                          widget.news.category
-                              .toUpperCase(),
+                          translateCategory(
+                            widget.news.category,
+                          ).toUpperCase(),
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: colorScheme
-                                .onSurfaceVariant,
+                            color: colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
-
-                      // Save button.
                       IconButton(
                         onPressed: _toggleSaved,
                         icon: Icon(
@@ -280,19 +284,14 @@ class _NewsCardState extends State<NewsCard> {
                               : Icons.bookmark_outline,
                           color: isSaved
                               ? colorScheme.onSurface
-                              : colorScheme
-                              .onSurfaceVariant,
+                              : colorScheme.onSurfaceVariant,
                         ),
                         padding: EdgeInsets.zero,
-                        constraints:
-                        const BoxConstraints(),
+                        constraints: const BoxConstraints(),
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 5),
-
-                  // News title.
                   Text(
                     widget.news.title,
                     maxLines: 2,
@@ -303,29 +302,21 @@ class _NewsCardState extends State<NewsCard> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 5),
-
-                  // News description.
                   Text(
                     widget.news.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color:
-                      colorScheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
                   ),
-
                   const SizedBox(height: 7),
-
-                  // News time.
                   Text(
                     widget.news.time,
                     style: TextStyle(
-                      color:
-                      colorScheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 11,
                     ),
                   ),

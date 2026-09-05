@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../services/language_service.dart';
 import '../services/saved_news_service.dart';
 import '../widgets/news_card.dart';
 
 class SavedScreen extends StatefulWidget {
   final AuthService authService;
+  final LanguageService languageService;
 
   const SavedScreen({
     super.key,
     required this.authService,
+    required this.languageService,
   });
 
   @override
@@ -17,6 +20,10 @@ class SavedScreen extends StatefulWidget {
 }
 
 class _SavedScreenState extends State<SavedScreen> {
+  String translate(String key) {
+    return widget.languageService.translate(key);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -24,30 +31,24 @@ class _SavedScreenState extends State<SavedScreen> {
     final savedNews = SavedNewsService.savedNews;
 
     return Scaffold(
-      // Follows the selected Light/Dark theme.
       backgroundColor: theme.scaffoldBackgroundColor,
-
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-
         iconTheme: IconThemeData(
           color: colorScheme.onSurface,
         ),
-
         title: Text(
-          'Saved',
+          translate('saved'),
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
-
         centerTitle: true,
       ),
-
       body: savedNews.isEmpty
           ? _buildEmptyState(colorScheme)
           : ListView.builder(
@@ -60,13 +61,13 @@ class _SavedScreenState extends State<SavedScreen> {
             ),
             news: savedNews[index],
             authService: widget.authService,
+            languageService: widget.languageService,
           );
         },
       ),
     );
   }
 
-  // Empty state.
   Widget _buildEmptyState(ColorScheme colorScheme) {
     return Center(
       child: Padding(
@@ -77,34 +78,34 @@ class _SavedScreenState extends State<SavedScreen> {
             Container(
               padding: const EdgeInsets.all(25),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest,
+                color:
+                colorScheme.surfaceContainerHighest,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.bookmark_outline,
                 size: 55,
-                color: colorScheme.onSurfaceVariant,
+                color:
+                colorScheme.onSurfaceVariant,
               ),
             ),
-
             const SizedBox(height: 25),
-
             Text(
-              'No Saved News',
+              translate('no_saved_news'),
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: colorScheme.onSurface,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             const SizedBox(height: 10),
-
             Text(
-              'Save articles you want to read later.',
+              translate('save_articles_later'),
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
+                color:
+                colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),

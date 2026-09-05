@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../models/news_model.dart';
+import '../services/language_service.dart';
 import '../services/saved_news_service.dart';
 
 class NewsDetailsScreen extends StatefulWidget {
   final NewsModel news;
+  final LanguageService? languageService;
 
   const NewsDetailsScreen({
     super.key,
     required this.news,
+    this.languageService,
   });
 
   @override
@@ -18,18 +21,40 @@ class NewsDetailsScreen extends StatefulWidget {
 
 class _NewsDetailsScreenState
     extends State<NewsDetailsScreen> {
+  String translate(String key) {
+    return widget.languageService?.translate(key) ?? key;
+  }
+
+  String translateCategory(String category) {
+    switch (category) {
+      case 'Business':
+        return translate('business');
+      case 'Sports':
+        return translate('sports');
+      case 'Technology':
+        return translate('technology');
+      case 'Health':
+        return translate('health');
+      default:
+        return category;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
     final isSaved =
     SavedNewsService.isSaved(widget.news);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor:
+      theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
-        backgroundColor: theme.scaffoldBackgroundColor,
+        backgroundColor:
+        theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
 
@@ -44,7 +69,7 @@ class _NewsDetailsScreenState
         ),
 
         title: Text(
-          'Article',
+          translate('article'),
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 22,
@@ -79,7 +104,8 @@ class _NewsDetailsScreenState
           CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(
+              borderRadius:
+              const BorderRadius.vertical(
                 bottom: Radius.circular(25),
               ),
               child: Image.asset(
@@ -95,13 +121,13 @@ class _NewsDetailsScreenState
                   return Container(
                     width: double.infinity,
                     height: 250,
-                    color:
-                    colorScheme.surfaceContainerHighest,
+                    color: colorScheme
+                        .surfaceContainerHighest,
                     child: Icon(
                       Icons.image_outlined,
                       size: 70,
-                      color:
-                      colorScheme.onSurfaceVariant,
+                      color: colorScheme
+                          .onSurfaceVariant,
                     ),
                   );
                 },
@@ -109,13 +135,15 @@ class _NewsDetailsScreenState
             ),
 
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding:
+              const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment:
                 CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding:
+                    const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 7,
                     ),
@@ -126,13 +154,15 @@ class _NewsDetailsScreenState
                       BorderRadius.circular(20),
                     ),
                     child: Text(
-                      widget.news.category
-                          .toUpperCase(),
+                      translateCategory(
+                        widget.news.category,
+                      ).toUpperCase(),
                       style: TextStyle(
                         color:
                         colorScheme.onSurface,
                         fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                        fontWeight:
+                        FontWeight.bold,
                       ),
                     ),
                   ),
@@ -146,7 +176,8 @@ class _NewsDetailsScreenState
                       colorScheme.onSurface,
                       fontSize: 28,
                       height: 1.2,
-                      fontWeight: FontWeight.bold,
+                      fontWeight:
+                      FontWeight.bold,
                     ),
                   ),
 
@@ -160,9 +191,7 @@ class _NewsDetailsScreenState
                         color: colorScheme
                             .onSurfaceVariant,
                       ),
-
                       const SizedBox(width: 6),
-
                       Text(
                         widget.news.time,
                         style: TextStyle(
@@ -189,19 +218,24 @@ class _NewsDetailsScreenState
                   const SizedBox(height: 25),
 
                   Text(
-                    'About this story',
+                    translate(
+                      'about_this_story',
+                    ),
                     style: TextStyle(
                       color:
                       colorScheme.onSurface,
                       fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      fontWeight:
+                      FontWeight.bold,
                     ),
                   ),
 
                   const SizedBox(height: 10),
 
                   Text(
-                    'Stay updated with the latest developments, important stories, and information from around the world.',
+                    translate(
+                      'story_details',
+                    ),
                     style: TextStyle(
                       color: colorScheme
                           .onSurfaceVariant,

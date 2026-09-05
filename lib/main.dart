@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'screens/main_screen.dart';
 import 'services/auth_service.dart';
+import 'services/language_service.dart';
 import 'services/theme_service.dart';
 
 void main() {
@@ -18,6 +20,7 @@ class NewsApp extends StatefulWidget {
 class _NewsAppState extends State<NewsApp> {
   final ThemeService themeService = ThemeService();
   final AuthService authService = AuthService();
+  final LanguageService languageService = LanguageService();
 
   @override
   void initState() {
@@ -25,6 +28,7 @@ class _NewsAppState extends State<NewsApp> {
 
     themeService.addListener(_appChanged);
     authService.addListener(_appChanged);
+    languageService.addListener(_appChanged);
   }
 
   void _appChanged() {
@@ -35,9 +39,11 @@ class _NewsAppState extends State<NewsApp> {
   void dispose() {
     themeService.removeListener(_appChanged);
     authService.removeListener(_appChanged);
+    languageService.removeListener(_appChanged);
 
     themeService.dispose();
     authService.dispose();
+    languageService.dispose();
 
     super.dispose();
   }
@@ -47,6 +53,26 @@ class _NewsAppState extends State<NewsApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'News App',
+
+      locale: Locale(
+        languageService.languageCode,
+      ),
+
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ar'),
+        Locale('es'),
+        Locale('fr'),
+        Locale('de'),
+        Locale('ja'),
+        Locale('zh'),
+      ],
 
       theme: ThemeData(
         useMaterial3: true,
@@ -61,7 +87,8 @@ class _NewsAppState extends State<NewsApp> {
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF121212),
+        scaffoldBackgroundColor:
+        const Color(0xFF121212),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.white,
           brightness: Brightness.dark,
@@ -72,11 +99,10 @@ class _NewsAppState extends State<NewsApp> {
           ? ThemeMode.dark
           : ThemeMode.light,
 
-      // The Home screen is always accessible.
-      // Login and Register are required only for protected features.
       home: MainScreen(
         themeService: themeService,
         authService: authService,
+        languageService: languageService,
       ),
     );
   }

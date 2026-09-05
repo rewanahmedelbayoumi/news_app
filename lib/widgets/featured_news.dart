@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/news_model.dart';
 import '../services/auth_service.dart';
+import '../services/language_service.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/news_details_screen.dart';
@@ -9,12 +10,33 @@ import '../screens/news_details_screen.dart';
 class FeaturedNews extends StatelessWidget {
   final NewsModel news;
   final AuthService? authService;
+  final LanguageService? languageService;
 
   const FeaturedNews({
     super.key,
     required this.news,
     this.authService,
+    this.languageService,
   });
+
+  String translate(String key) {
+    return languageService?.translate(key) ?? key;
+  }
+
+  String translateCategory(String category) {
+    switch (category) {
+      case 'Business':
+        return translate('business');
+      case 'Sports':
+        return translate('sports');
+      case 'Technology':
+        return translate('technology');
+      case 'Health':
+        return translate('health');
+      default:
+        return category;
+    }
+  }
 
   void _openLogin(BuildContext context) {
     final service = authService;
@@ -28,6 +50,7 @@ class FeaturedNews extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => LoginScreen(
           authService: service,
+          languageService: languageService,
         ),
       ),
     );
@@ -45,6 +68,7 @@ class FeaturedNews extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => RegisterScreen(
           authService: service,
+          languageService: languageService,
         ),
       ),
     );
@@ -82,14 +106,11 @@ class FeaturedNews extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color:
-                    colorScheme.surfaceContainerHighest,
+                    color: colorScheme.surfaceContainerHighest,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -98,31 +119,25 @@ class FeaturedNews extends StatelessWidget {
                     color: colorScheme.onSurface,
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 Text(
-                  'Login Required',
+                  translate('login_required'),
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
-                  'Login or create an account to read this article.',
+                  translate('login_or_register'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: colorScheme.onSurfaceVariant,
                     fontSize: 14,
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -131,18 +146,16 @@ class FeaturedNews extends StatelessWidget {
                       Navigator.pop(context);
                       _openLogin(context);
                     },
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
+                    child: Text(
+                      translate('login'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -151,16 +164,15 @@ class FeaturedNews extends StatelessWidget {
                       Navigator.pop(context);
                       _openRegister(context);
                     },
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
+                    child: Text(
+                      translate('register'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
               ],
             ),
@@ -183,6 +195,7 @@ class FeaturedNews extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => NewsDetailsScreen(
           news: news,
+          languageService: languageService,
         ),
       ),
     );
@@ -217,21 +230,18 @@ class FeaturedNews extends StatelessWidget {
                       stackTrace,
                       ) {
                     return Container(
-                      color:
-                      colorScheme.surfaceContainerHighest,
+                      color: colorScheme.surfaceContainerHighest,
                       child: Center(
                         child: Icon(
                           Icons.image_outlined,
                           size: 60,
-                          color:
-                          colorScheme.onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ),
                     );
                   },
                 ),
               ),
-
               Positioned(
                 left: 15,
                 right: 15,
@@ -243,21 +253,19 @@ class FeaturedNews extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Column(
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        news.category.toUpperCase(),
+                        translateCategory(
+                          news.category,
+                        ).toUpperCase(),
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: colorScheme
-                              .onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ),
-
                       const SizedBox(height: 5),
-
                       Text(
                         news.title,
                         maxLines: 2,

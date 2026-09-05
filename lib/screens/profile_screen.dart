@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../services/language_service.dart';
 import '../services/theme_service.dart';
 import 'auth/login_screen.dart';
 import 'auth/register_screen.dart';
@@ -9,12 +10,18 @@ import 'settings_screen.dart';
 class ProfileScreen extends StatelessWidget {
   final ThemeService themeService;
   final AuthService authService;
+  final LanguageService languageService;
 
   const ProfileScreen({
     super.key,
     required this.themeService,
     required this.authService,
+    required this.languageService,
   });
+
+  String translate(String key) {
+    return languageService.translate(key);
+  }
 
   void _openLogin(BuildContext context) {
     Navigator.push(
@@ -22,6 +29,7 @@ class ProfileScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => LoginScreen(
           authService: authService,
+          languageService: languageService,
         ),
       ),
     );
@@ -33,6 +41,7 @@ class ProfileScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => RegisterScreen(
           authService: authService,
+          languageService: languageService,
         ),
       ),
     );
@@ -70,9 +79,7 @@ class ProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
@@ -86,31 +93,25 @@ class ProfileScreen extends StatelessWidget {
                     color: colorScheme.onSurface,
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 Text(
-                  'Login Required',
+                  translate('login_required'),
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
-                  'Login or create an account to access your profile.',
+                  translate('login_or_register'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: colorScheme.onSurfaceVariant,
                     fontSize: 14,
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -119,18 +120,16 @@ class ProfileScreen extends StatelessWidget {
                       Navigator.pop(context);
                       _openLogin(context);
                     },
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
+                    child: Text(
+                      translate('login'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -139,16 +138,15 @@ class ProfileScreen extends StatelessWidget {
                       Navigator.pop(context);
                       _openRegister(context);
                     },
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
+                    child: Text(
+                      translate('register'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
               ],
             ),
@@ -171,31 +169,29 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text(
-            'Edit Profile',
+          title: Text(
+            translate('edit_profile'),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  prefixIcon: Icon(
+                decoration: InputDecoration(
+                  labelText: translate('name'),
+                  prefixIcon: const Icon(
                     Icons.person_outline,
                   ),
                 ),
               ),
-
               const SizedBox(height: 15),
-
               TextField(
                 controller: emailController,
                 keyboardType:
                 TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(
+                decoration: InputDecoration(
+                  labelText: translate('email'),
+                  prefixIcon: const Icon(
                     Icons.email_outlined,
                   ),
                 ),
@@ -207,8 +203,8 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(dialogContext);
               },
-              child: const Text(
-                'Cancel',
+              child: Text(
+                translate('cancel'),
               ),
             ),
             FilledButton(
@@ -231,15 +227,15 @@ class ProfileScreen extends StatelessWidget {
 
                 ScaffoldMessenger.of(context)
                     .showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Text(
-                      'Profile updated successfully.',
+                      translate('profile_updated'),
                     ),
                   ),
                 );
               },
-              child: const Text(
-                'Save',
+              child: Text(
+                translate('save'),
               ),
             ),
           ],
@@ -253,19 +249,19 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text(
-            'Logout',
+          title: Text(
+            translate('logout'),
           ),
-          content: const Text(
-            'Are you sure you want to logout?',
+          content: Text(
+            translate('logout_confirmation'),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(dialogContext);
               },
-              child: const Text(
-                'Cancel',
+              child: Text(
+                translate('cancel'),
               ),
             ),
             FilledButton(
@@ -276,20 +272,32 @@ class ProfileScreen extends StatelessWidget {
 
                 ScaffoldMessenger.of(context)
                     .showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Text(
-                      'Logged out successfully.',
+                      translate('logged_out'),
                     ),
                   ),
                 );
               },
-              child: const Text(
-                'Logout',
+              child: Text(
+                translate('logout'),
               ),
             ),
           ],
         );
       },
+    );
+  }
+
+  void _openSettings(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SettingsScreen(
+          themeService: themeService,
+          languageService: languageService,
+        ),
+      ),
     );
   }
 
@@ -325,14 +333,13 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor:
       Theme.of(context).scaffoldBackgroundColor,
-
       appBar: AppBar(
         backgroundColor:
         Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          'Profile',
+          translate('profile'),
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 25,
@@ -341,7 +348,6 @@ class ProfileScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(30),
@@ -351,33 +357,27 @@ class ProfileScreen extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 45,
-                backgroundColor: isDark
-                    ? Colors.white
-                    : Colors.black,
+                backgroundColor:
+                isDark ? Colors.white : Colors.black,
                 child: Icon(
                   Icons.person_outline,
                   size: 50,
-                  color: isDark
-                      ? Colors.black
-                      : Colors.white,
+                  color:
+                  isDark ? Colors.black : Colors.white,
                 ),
               ),
-
               const SizedBox(height: 25),
-
               Text(
-                'Welcome',
+                translate('welcome'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 8),
-
               Text(
-                'Login or create an account to access your profile.',
+                translate('login_or_register'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color:
@@ -385,9 +385,7 @@ class ProfileScreen extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-
               const SizedBox(height: 30),
-
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -395,18 +393,16 @@ class ProfileScreen extends StatelessWidget {
                   onPressed: () {
                     _openLogin(context);
                   },
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(
+                  child: Text(
+                    translate('login'),
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-
               const SizedBox(height: 12),
-
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -414,9 +410,9 @@ class ProfileScreen extends StatelessWidget {
                   onPressed: () {
                     _openRegister(context);
                   },
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(
+                  child: Text(
+                    translate('register'),
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -438,30 +434,25 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor:
       Theme.of(context).scaffoldBackgroundColor,
-
       appBar: AppBar(
         backgroundColor:
         Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-
         title: Text(
-          'Profile',
+          translate('profile'),
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
-
         centerTitle: true,
       ),
-
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           const SizedBox(height: 15),
-
           CircleAvatar(
             radius: 45,
             backgroundColor:
@@ -469,14 +460,11 @@ class ProfileScreen extends StatelessWidget {
             child: Icon(
               Icons.person,
               size: 50,
-              color: isDark
-                  ? Colors.black
-                  : Colors.white,
+              color:
+              isDark ? Colors.black : Colors.white,
             ),
           ),
-
           const SizedBox(height: 15),
-
           Center(
             child: Text(
               authService.name ?? 'News Reader',
@@ -487,64 +475,50 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 5),
-
           Center(
             child: Text(
               authService.email ?? '',
               style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
+                color:
+                colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),
           ),
-
           const SizedBox(height: 35),
-
           _ProfileOption(
             icon: Icons.person_outline,
-            title: 'Edit Profile',
+            title: translate('edit_profile'),
             onTap: () {
               _showEditProfile(context);
             },
           ),
-
           _ProfileOption(
             icon: Icons.bookmark_outline,
-            title: 'Saved Articles',
+            title: translate('saved_articles'),
             onTap: () {},
           ),
-
           _ProfileOption(
             icon: Icons.history,
-            title: 'Reading History',
+            title: translate('reading_history'),
             onTap: () {},
           ),
-
           _ProfileOption(
             icon: Icons.notifications_none,
-            title: 'Notification Preferences',
+            title: translate(
+              'notification_preferences',
+            ),
             onTap: () {},
           ),
-
           _ProfileOption(
             icon: Icons.settings_outlined,
-            title: 'Settings',
+            title: translate('settings'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SettingsScreen(
-                    themeService: themeService,
-                  ),
-                ),
-              );
+              _openSettings(context);
             },
           ),
-
           const SizedBox(height: 20),
-
           SizedBox(
             height: 52,
             child: OutlinedButton.icon(
@@ -554,9 +528,9 @@ class ProfileScreen extends StatelessWidget {
               icon: const Icon(
                 Icons.logout,
               ),
-              label: const Text(
-                'Logout',
-                style: TextStyle(
+              label: Text(
+                translate('logout'),
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -586,12 +560,11 @@ class _ProfileOption extends StatelessWidget {
 
     return ListTile(
       contentPadding: EdgeInsets.zero,
-
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: colorScheme
-              .surfaceContainerHighest,
+          color:
+          colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
@@ -599,7 +572,6 @@ class _ProfileOption extends StatelessWidget {
           color: colorScheme.onSurface,
         ),
       ),
-
       title: Text(
         title,
         style: TextStyle(
@@ -607,13 +579,11 @@ class _ProfileOption extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-
       trailing: Icon(
         Icons.arrow_forward_ios,
         size: 16,
         color: colorScheme.onSurfaceVariant,
       ),
-
       onTap: onTap,
     );
   }

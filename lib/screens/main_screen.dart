@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../services/language_service.dart';
 import '../services/theme_service.dart';
 import '../widgets/bottom_nav_bar.dart';
 import 'auth/login_screen.dart';
@@ -12,11 +13,13 @@ import 'saved_screen.dart';
 class MainScreen extends StatefulWidget {
   final ThemeService themeService;
   final AuthService authService;
+  final LanguageService languageService;
 
   const MainScreen({
     super.key,
     required this.themeService,
     required this.authService,
+    required this.languageService,
   });
 
   @override
@@ -26,12 +29,17 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int selectedIndex = 0;
 
+  String translate(String key) {
+    return widget.languageService.translate(key);
+  }
+
   void _openLogin() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => LoginScreen(
           authService: widget.authService,
+          languageService: widget.languageService,
         ),
       ),
     );
@@ -43,6 +51,7 @@ class _MainScreenState extends State<MainScreen> {
       MaterialPageRoute(
         builder: (_) => RegisterScreen(
           authService: widget.authService,
+          languageService: widget.languageService,
         ),
       ),
     );
@@ -83,9 +92,7 @@ class _MainScreenState extends State<MainScreen> {
                     color: colorScheme.onSurface,
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 Text(
                   title,
                   textAlign: TextAlign.center,
@@ -95,11 +102,9 @@ class _MainScreenState extends State<MainScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
                 Text(
-                  'Login or create an account to continue.',
+                  translate('login_or_register'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color:
@@ -107,34 +112,30 @@ class _MainScreenState extends State<MainScreen> {
                     fontSize: 14,
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
                   child: FilledButton(
                     onPressed: _openLogin,
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
+                    child: Text(
+                      translate('login'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
                   child: OutlinedButton(
                     onPressed: _openRegister,
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
+                    child: Text(
+                      translate('register'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -158,32 +159,33 @@ class _MainScreenState extends State<MainScreen> {
           HomeScreen(
             authService: widget.authService,
             themeService: widget.themeService,
+            languageService: widget.languageService,
           ),
-
           _buildProtectedScreen(
-            title: 'Your Saved News',
+            title: translate('saved_articles'),
             icon: Icons.bookmark_outline,
             child: SavedScreen(
               key: ValueKey(
                 widget.authService.isLoggedIn,
               ),
               authService: widget.authService,
+              languageService: widget.languageService,
             ),
           ),
-
           _buildProtectedScreen(
-            title: 'Your Profile',
+            title: translate('profile'),
             icon: Icons.person_outline,
             child: ProfileScreen(
               themeService: widget.themeService,
               authService: widget.authService,
+              languageService: widget.languageService,
             ),
           ),
         ],
       ),
-
       bottomNavigationBar: BottomNavBar(
         selectedIndex: selectedIndex,
+        languageService: widget.languageService,
         onDestinationSelected: (index) {
           setState(() {
             selectedIndex = index;

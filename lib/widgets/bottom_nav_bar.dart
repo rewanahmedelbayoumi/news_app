@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../services/language_service.dart';
+
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
+  final LanguageService languageService;
 
   const BottomNavBar({
     super.key,
     required this.selectedIndex,
     required this.onDestinationSelected,
+    required this.languageService,
   });
 
   @override
@@ -17,11 +21,8 @@ class BottomNavBar extends StatelessWidget {
     return NavigationBar(
       selectedIndex: selectedIndex,
       onDestinationSelected: onDestinationSelected,
-
       backgroundColor: colorScheme.surface,
-
       indicatorColor: colorScheme.primaryContainer,
-
       destinations: [
         NavigationDestination(
           icon: Icon(
@@ -32,7 +33,7 @@ class BottomNavBar extends StatelessWidget {
             Icons.home,
             color: colorScheme.onPrimaryContainer,
           ),
-          label: 'Home',
+          label: languageService.translate('home'),
         ),
         NavigationDestination(
           icon: Icon(
@@ -43,7 +44,7 @@ class BottomNavBar extends StatelessWidget {
             Icons.bookmark,
             color: colorScheme.onPrimaryContainer,
           ),
-          label: 'Saved',
+          label: languageService.translate('saved'),
         ),
         NavigationDestination(
           icon: Icon(
@@ -54,7 +55,7 @@ class BottomNavBar extends StatelessWidget {
             Icons.person,
             color: colorScheme.onPrimaryContainer,
           ),
-          label: 'Profile',
+          label: languageService.translate('profile'),
         ),
       ],
     );

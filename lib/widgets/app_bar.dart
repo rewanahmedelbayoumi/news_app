@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../services/language_service.dart';
+
 class AppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
   final VoidCallback onMenuPressed;
   final VoidCallback onSearchPressed;
+  final LanguageService languageService;
 
   const AppBarWidget({
     super.key,
     required this.onMenuPressed,
     required this.onSearchPressed,
+    required this.languageService,
   });
 
   @override
@@ -30,7 +34,7 @@ class AppBarWidget extends StatelessWidget
       ),
 
       title: Text(
-        'News',
+        languageService.translate('news'),
         style: TextStyle(
           color: colorScheme.onSurface,
           fontSize: 25,

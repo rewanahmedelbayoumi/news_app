@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
+import '../../services/language_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   final AuthService authService;
+  final LanguageService? languageService;
 
   const RegisterScreen({
     super.key,
     required this.authService,
+    this.languageService,
   });
 
   @override
@@ -22,6 +25,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
+
+  String translate(String key) {
+    return widget.languageService?.translate(key) ?? key;
+  }
 
   @override
   void dispose() {
@@ -44,21 +51,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password.isEmpty ||
         confirmPassword.isEmpty) {
       _showMessage(
-        'Please fill in all fields.',
+        translate('fill_all_fields'),
       );
       return;
     }
 
     if (password.length < 6) {
       _showMessage(
-        'Password must be at least 6 characters.',
+        translate('password_minimum'),
       );
       return;
     }
 
     if (password != confirmPassword) {
       _showMessage(
-        'Passwords do not match.',
+        translate('passwords_not_match'),
       );
       return;
     }
@@ -70,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
 
     _showMessage(
-      'Account created successfully.',
+      translate('account_created'),
     );
 
     Navigator.pop(context);
@@ -90,9 +97,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor:
+      theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: theme.scaffoldBackgroundColor,
+        backgroundColor:
+        theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
       ),
@@ -103,95 +112,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
             vertical: 15,
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+            CrossAxisAlignment.start,
             children: [
               Text(
-                'Create Account',
+                translate('create_account'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 8),
-
               Text(
-                'Create your account and start exploring the latest news.',
+                translate('create_account_description'),
                 style: TextStyle(
-                  color: colorScheme.onSurfaceVariant,
+                  color:
+                  colorScheme.onSurfaceVariant,
                   fontSize: 14,
                 ),
               ),
-
               const SizedBox(height: 35),
-
               Text(
-                'Full Name',
+                translate('full_name'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-
               const SizedBox(height: 8),
-
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  hintText: 'Enter your name',
+                  hintText:
+                  translate('enter_name'),
                   prefixIcon: const Icon(
                     Icons.person_outline,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius:
+                    BorderRadius.circular(15),
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
               Text(
-                'Email',
+                translate('email'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-
               const SizedBox(height: 8),
-
               TextField(
                 controller: emailController,
-                keyboardType: TextInputType.emailAddress,
+                keyboardType:
+                TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  hintText: 'Enter your email',
+                  hintText:
+                  translate('enter_email'),
                   prefixIcon: const Icon(
                     Icons.email_outlined,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius:
+                    BorderRadius.circular(15),
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
               Text(
-                'Password',
+                translate('password'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-
               const SizedBox(height: 8),
-
               TextField(
                 controller: passwordController,
                 obscureText: obscurePassword,
                 decoration: InputDecoration(
-                  hintText: 'Create a password',
+                  hintText:
+                  translate('create_password'),
                   prefixIcon: const Icon(
                     Icons.lock_outline,
                   ),
@@ -209,28 +212,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius:
+                    BorderRadius.circular(15),
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
               Text(
-                'Confirm Password',
+                translate('confirm_password'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-
               const SizedBox(height: 8),
-
               TextField(
-                controller: confirmPasswordController,
-                obscureText: obscureConfirmPassword,
+                controller:
+                confirmPasswordController,
+                obscureText:
+                obscureConfirmPassword,
                 decoration: InputDecoration(
-                  hintText: 'Confirm your password',
+                  hintText: translate(
+                    'confirm_your_password',
+                  ),
                   prefixIcon: const Icon(
                     Icons.lock_outline,
                   ),
@@ -248,44 +252,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius:
+                    BorderRadius.circular(15),
                   ),
                 ),
               ),
-
               const SizedBox(height: 30),
-
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: FilledButton(
                   onPressed: _register,
-                  child: const Text(
-                    'Create Account',
-                    style: TextStyle(
+                  child: Text(
+                    translate('create_account'),
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment:
+                MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Already have an account?',
-                    style: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
+                  Flexible(
+                    child: Text(
+                      translate(
+                        'already_have_account',
+                      ),
+                      style: TextStyle(
+                        color: colorScheme
+                            .onSurfaceVariant,
+                      ),
                     ),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text('Login'),
+                    child: Text(
+                      translate('login'),
+                    ),
                   ),
                 ],
               ),
