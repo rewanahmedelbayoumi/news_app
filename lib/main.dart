@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/main_screen.dart';
+import 'services/auth_service.dart';
 import 'services/theme_service.dart';
 
 void main() {
@@ -16,22 +17,28 @@ class NewsApp extends StatefulWidget {
 
 class _NewsAppState extends State<NewsApp> {
   final ThemeService themeService = ThemeService();
+  final AuthService authService = AuthService();
 
   @override
   void initState() {
     super.initState();
 
-    themeService.addListener(_themeChanged);
+    themeService.addListener(_appChanged);
+    authService.addListener(_appChanged);
   }
 
-  void _themeChanged() {
+  void _appChanged() {
     setState(() {});
   }
 
   @override
   void dispose() {
-    themeService.removeListener(_themeChanged);
+    themeService.removeListener(_appChanged);
+    authService.removeListener(_appChanged);
+
     themeService.dispose();
+    authService.dispose();
+
     super.dispose();
   }
 
@@ -39,7 +46,6 @@ class _NewsAppState extends State<NewsApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
       title: 'News App',
 
       theme: ThemeData(
@@ -66,8 +72,11 @@ class _NewsAppState extends State<NewsApp> {
           ? ThemeMode.dark
           : ThemeMode.light,
 
+      // The Home screen is always accessible.
+      // Login and Register are required only for protected features.
       home: MainScreen(
         themeService: themeService,
+        authService: authService,
       ),
     );
   }

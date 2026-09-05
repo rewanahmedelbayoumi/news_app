@@ -1,0 +1,222 @@
+import 'package:flutter/material.dart';
+
+import '../models/news_model.dart';
+import '../services/saved_news_service.dart';
+
+class NewsDetailsScreen extends StatefulWidget {
+  final NewsModel news;
+
+  const NewsDetailsScreen({
+    super.key,
+    required this.news,
+  });
+
+  @override
+  State<NewsDetailsScreen> createState() =>
+      _NewsDetailsScreenState();
+}
+
+class _NewsDetailsScreenState
+    extends State<NewsDetailsScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isSaved =
+    SavedNewsService.isSaved(widget.news);
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+
+      appBar: AppBar(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: colorScheme.onSurface,
+          ),
+        ),
+
+        title: Text(
+          'Article',
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        centerTitle: true,
+
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                SavedNewsService.toggleSaved(
+                  widget.news,
+                );
+              });
+            },
+            icon: Icon(
+              isSaved
+                  ? Icons.bookmark
+                  : Icons.bookmark_outline,
+              color: colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment:
+          CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(25),
+              ),
+              child: Image.asset(
+                widget.news.image,
+                width: double.infinity,
+                height: 250,
+                fit: BoxFit.cover,
+                errorBuilder: (
+                    context,
+                    error,
+                    stackTrace,
+                    ) {
+                  return Container(
+                    width: double.infinity,
+                    height: 250,
+                    color:
+                    colorScheme.surfaceContainerHighest,
+                    child: Icon(
+                      Icons.image_outlined,
+                      size: 70,
+                      color:
+                      colorScheme.onSurfaceVariant,
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colorScheme
+                          .surfaceContainerHighest,
+                      borderRadius:
+                      BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      widget.news.category
+                          .toUpperCase(),
+                      style: TextStyle(
+                        color:
+                        colorScheme.onSurface,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  Text(
+                    widget.news.title,
+                    style: TextStyle(
+                      color:
+                      colorScheme.onSurface,
+                      fontSize: 28,
+                      height: 1.2,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 17,
+                        color: colorScheme
+                            .onSurfaceVariant,
+                      ),
+
+                      const SizedBox(width: 6),
+
+                      Text(
+                        widget.news.time,
+                        style: TextStyle(
+                          color: colorScheme
+                              .onSurfaceVariant,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  Text(
+                    widget.news.description,
+                    style: TextStyle(
+                      color:
+                      colorScheme.onSurface,
+                      fontSize: 17,
+                      height: 1.7,
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  Text(
+                    'About this story',
+                    style: TextStyle(
+                      color:
+                      colorScheme.onSurface,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    'Stay updated with the latest developments, important stories, and information from around the world.',
+                    style: TextStyle(
+                      color: colorScheme
+                          .onSurfaceVariant,
+                      fontSize: 15,
+                      height: 1.6,
+                    ),
+                  ),
+
+                  const SizedBox(height: 35),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

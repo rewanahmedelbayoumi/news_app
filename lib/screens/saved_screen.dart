@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
 import '../services/saved_news_service.dart';
 import '../widgets/news_card.dart';
 
 class SavedScreen extends StatefulWidget {
-  const SavedScreen({super.key});
+  final AuthService authService;
+
+  const SavedScreen({
+    super.key,
+    required this.authService,
+  });
 
   @override
   State<SavedScreen> createState() => _SavedScreenState();
@@ -13,25 +19,27 @@ class SavedScreen extends StatefulWidget {
 class _SavedScreenState extends State<SavedScreen> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final savedNews = SavedNewsService.savedNews;
 
     return Scaffold(
-      // Saved is always Light
-      backgroundColor: Colors.white,
+      // Follows the selected Light/Dark theme.
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
 
-        iconTheme: const IconThemeData(
-          color: Colors.black,
+        iconTheme: IconThemeData(
+          color: colorScheme.onSurface,
         ),
 
-        title: const Text(
+        title: Text(
           'Saved',
           style: TextStyle(
-            color: Colors.black,
+            color: colorScheme.onSurface,
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
@@ -41,7 +49,7 @@ class _SavedScreenState extends State<SavedScreen> {
       ),
 
       body: savedNews.isEmpty
-          ? _buildEmptyState()
+          ? _buildEmptyState(colorScheme)
           : ListView.builder(
         padding: const EdgeInsets.all(20),
         itemCount: savedNews.length,
@@ -51,17 +59,15 @@ class _SavedScreenState extends State<SavedScreen> {
               savedNews[index].title,
             ),
             news: savedNews[index],
+            authService: widget.authService,
           );
         },
       ),
     );
   }
 
-  // ----------------------------------------------------------
-  // Empty State
-  // ----------------------------------------------------------
-
-  Widget _buildEmptyState() {
+  // Empty state.
+  Widget _buildEmptyState(ColorScheme colorScheme) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(30),
@@ -71,22 +77,22 @@ class _SavedScreenState extends State<SavedScreen> {
             Container(
               padding: const EdgeInsets.all(25),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: colorScheme.surfaceContainerHighest,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.bookmark_outline,
                 size: 55,
-                color: Colors.grey,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
 
             const SizedBox(height: 25),
 
-            const Text(
+            Text(
               'No Saved News',
               style: TextStyle(
-                color: Colors.black,
+                color: colorScheme.onSurface,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
@@ -94,11 +100,11 @@ class _SavedScreenState extends State<SavedScreen> {
 
             const SizedBox(height: 10),
 
-            const Text(
+            Text(
               'Save articles you want to read later.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.grey,
+                color: colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),

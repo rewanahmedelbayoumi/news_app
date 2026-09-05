@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
+
 import '../models/news_model.dart';
 
-class SavedNewsService {
+class SavedNewsService extends ChangeNotifier {
   static final List<NewsModel> _savedNews = [];
 
-  static List<NewsModel> get savedNews => List.unmodifiable(_savedNews);
+  static List<NewsModel> get savedNews =>
+      List.unmodifiable(_savedNews);
 
   static bool isSaved(NewsModel news) {
     return _savedNews.any(
