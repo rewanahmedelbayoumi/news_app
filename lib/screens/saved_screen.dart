@@ -16,12 +16,18 @@ class _SavedScreenState extends State<SavedScreen> {
     final savedNews = SavedNewsService.savedNews;
 
     return Scaffold(
+      // Saved is always Light
       backgroundColor: Colors.white,
 
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.white,
+
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ),
+
         title: const Text(
           'Saved',
           style: TextStyle(
@@ -30,6 +36,7 @@ class _SavedScreenState extends State<SavedScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         centerTitle: true,
       ),
 
@@ -40,13 +47,19 @@ class _SavedScreenState extends State<SavedScreen> {
         itemCount: savedNews.length,
         itemBuilder: (context, index) {
           return NewsCard(
-            key: ValueKey(savedNews[index].title),
+            key: ValueKey(
+              savedNews[index].title,
+            ),
             news: savedNews[index],
           );
         },
       ),
     );
   }
+
+  // ----------------------------------------------------------
+  // Empty State
+  // ----------------------------------------------------------
 
   Widget _buildEmptyState() {
     return Center(
@@ -73,6 +86,7 @@ class _SavedScreenState extends State<SavedScreen> {
             const Text(
               'No Saved News',
               style: TextStyle(
+                color: Colors.black,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),

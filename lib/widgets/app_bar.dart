@@ -13,32 +13,39 @@ class AppBarWidget extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       elevation: 0,
-      surfaceTintColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+
       leading: IconButton(
         onPressed: onMenuPressed,
-        icon: const Icon(
+        icon: Icon(
           Icons.menu,
-          color: Colors.black,
+          color: colorScheme.onSurface,
         ),
       ),
-      title: const Text(
+
+      title: Text(
         'News',
         style: TextStyle(
-          color: Colors.black,
+          color: colorScheme.onSurface,
           fontSize: 25,
           fontWeight: FontWeight.bold,
         ),
       ),
+
       centerTitle: true,
+
       actions: [
         IconButton(
           onPressed: onSearchPressed,
-          icon: const Icon(
+          icon: Icon(
             Icons.search,
-            color: Colors.black,
+            color: colorScheme.onSurface,
           ),
         ),
       ],
@@ -46,5 +53,7 @@ class AppBarWidget extends StatelessWidget
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(
+    kToolbarHeight,
+  );
 }

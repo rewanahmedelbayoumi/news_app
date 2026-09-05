@@ -18,6 +18,7 @@ class NewsCard extends StatefulWidget {
 class _NewsCardState extends State<NewsCard> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isSaved = SavedNewsService.isSaved(widget.news);
 
     return Container(
@@ -25,6 +26,10 @@ class _NewsCardState extends State<NewsCard> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // --------------------------------------------------
+          // News Image
+          // --------------------------------------------------
+
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: Image.asset(
@@ -36,11 +41,11 @@ class _NewsCardState extends State<NewsCard> {
                 return Container(
                   width: 110,
                   height: 110,
-                  color: Colors.grey.shade200,
-                  child: const Icon(
+                  color: colorScheme.surfaceContainerHighest,
+                  child: Icon(
                     Icons.image_outlined,
                     size: 35,
-                    color: Colors.grey,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 );
               },
@@ -48,6 +53,10 @@ class _NewsCardState extends State<NewsCard> {
           ),
 
           const SizedBox(width: 15),
+
+          // --------------------------------------------------
+          // News Content
+          // --------------------------------------------------
 
           Expanded(
             child: Column(
@@ -58,13 +67,17 @@ class _NewsCardState extends State<NewsCard> {
                     Expanded(
                       child: Text(
                         widget.news.category.toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
+
+                    // --------------------------------------------------
+                    // Save Button
+                    // --------------------------------------------------
 
                     IconButton(
                       onPressed: () {
@@ -77,8 +90,8 @@ class _NewsCardState extends State<NewsCard> {
                             ? Icons.bookmark
                             : Icons.bookmark_outline,
                         color: isSaved
-                            ? Colors.black
-                            : Colors.grey,
+                            ? colorScheme.onSurface
+                            : colorScheme.onSurfaceVariant,
                       ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -88,11 +101,16 @@ class _NewsCardState extends State<NewsCard> {
 
                 const SizedBox(height: 5),
 
+                // --------------------------------------------------
+                // Title
+                // --------------------------------------------------
+
                 Text(
                   widget.news.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -100,23 +118,31 @@ class _NewsCardState extends State<NewsCard> {
 
                 const SizedBox(height: 5),
 
+                // --------------------------------------------------
+                // Description
+                // --------------------------------------------------
+
                 Text(
                   widget.news.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 12,
-                    color: Colors.grey,
                   ),
                 ),
 
                 const SizedBox(height: 7),
 
+                // --------------------------------------------------
+                // Time
+                // --------------------------------------------------
+
                 Text(
                   widget.news.time,
-                  style: const TextStyle(
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 11,
-                    color: Colors.grey,
                   ),
                 ),
               ],

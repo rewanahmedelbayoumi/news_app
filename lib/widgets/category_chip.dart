@@ -14,6 +14,8 @@ class CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -23,13 +25,17 @@ class CategoryChip extends StatelessWidget {
           vertical: 12,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : Colors.grey.shade100,
+          color: isSelected
+              ? colorScheme.onSurface
+              : colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(25),
         ),
         child: Text(
           title,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
+            color: isSelected
+                ? colorScheme.surface
+                : colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),

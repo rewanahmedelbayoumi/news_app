@@ -43,24 +43,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.white,
 
-      // App Bar
+      // Follows the selected Light/Dark theme
+      backgroundColor: theme.scaffoldBackgroundColor,
+
       appBar: AppBarWidget(
         onMenuPressed: () {
           _scaffoldKey.currentState?.openDrawer();
         },
-        onSearchPressed: () {
-          // Search will be added later
-        },
+        onSearchPressed: () {},
       ),
 
-      // Side Drawer
-      drawer: _buildDrawer(),
+      drawer: _buildDrawer(colorScheme),
 
-      // Home Content
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildGreeting(),
+              _buildGreeting(colorScheme),
 
               const SizedBox(height: 25),
 
@@ -78,15 +78,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 30),
 
-              _buildFeaturedSection(),
+              _buildFeaturedSection(colorScheme),
 
               const SizedBox(height: 30),
 
-              _buildLatestNewsHeader(),
+              _buildLatestNewsHeader(colorScheme),
 
               const SizedBox(height: 10),
 
-              _buildNewsList(),
+              _buildNewsList(colorScheme),
 
               const SizedBox(height: 20),
             ],
@@ -100,23 +100,22 @@ class _HomeScreenState extends State<HomeScreen> {
   // Greeting
   // ----------------------------------------------------------
 
-  Widget _buildGreeting() {
-    return const Column(
+  Widget _buildGreeting(ColorScheme colorScheme) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Good Morning 👋',
           style: TextStyle(
             fontSize: 16,
-            color: Colors.grey,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
-
-        SizedBox(height: 5),
-
+        const SizedBox(height: 5),
         Text(
           'What’s happening today?',
           style: TextStyle(
+            color: colorScheme.onSurface,
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
@@ -154,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Featured News
   // ----------------------------------------------------------
 
-  Widget _buildFeaturedSection() {
+  Widget _buildFeaturedSection(ColorScheme colorScheme) {
     if (NewsData.news.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -164,9 +163,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Featured News',
           style: TextStyle(
+            color: colorScheme.onSurface,
             fontSize: 21,
             fontWeight: FontWeight.bold,
           ),
@@ -185,13 +185,14 @@ class _HomeScreenState extends State<HomeScreen> {
   // Latest News Header
   // ----------------------------------------------------------
 
-  Widget _buildLatestNewsHeader() {
+  Widget _buildLatestNewsHeader(ColorScheme colorScheme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
+        Text(
           'Latest News',
           style: TextStyle(
+            color: colorScheme.onSurface,
             fontSize: 21,
             fontWeight: FontWeight.bold,
           ),
@@ -203,8 +204,11 @@ class _HomeScreenState extends State<HomeScreen> {
               selectedCategory = 0;
             });
           },
-          child: const Text(
+          child: Text(
             'See all',
+            style: TextStyle(
+              color: colorScheme.onSurface,
+            ),
           ),
         ),
       ],
@@ -215,15 +219,15 @@ class _HomeScreenState extends State<HomeScreen> {
   // News List
   // ----------------------------------------------------------
 
-  Widget _buildNewsList() {
+  Widget _buildNewsList(ColorScheme colorScheme) {
     if (filteredNews.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 40),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
         child: Center(
           child: Text(
             'No news found',
             style: TextStyle(
-              color: Colors.grey,
+              color: colorScheme.onSurfaceVariant,
               fontSize: 16,
             ),
           ),
@@ -250,16 +254,18 @@ class _HomeScreenState extends State<HomeScreen> {
   // Drawer
   // ----------------------------------------------------------
 
-  Widget _buildDrawer() {
+  Widget _buildDrawer(ColorScheme colorScheme) {
     return Drawer(
+      backgroundColor: colorScheme.surface,
       child: SafeArea(
         child: Column(
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               child: Center(
                 child: Text(
                   'News',
                   style: TextStyle(
+                    color: colorScheme.onSurface,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
@@ -268,11 +274,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.home_outlined,
+                color: colorScheme.onSurface,
               ),
-              title: const Text(
+              title: Text(
                 'Home',
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                ),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -280,11 +290,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.bookmark_outline,
+                color: colorScheme.onSurface,
               ),
-              title: const Text(
+              title: Text(
                 'Saved',
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                ),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -292,11 +306,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.settings_outlined,
+                color: colorScheme.onSurface,
               ),
-              title: const Text(
+              title: Text(
                 'Settings',
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                ),
               ),
               onTap: () {
                 Navigator.pop(context);

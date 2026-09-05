@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/news_model.dart';
 
 class FeaturedNews extends StatelessWidget {
@@ -11,11 +12,13 @@ class FeaturedNews extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       height: 220,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: ClipRRect(
@@ -28,18 +31,19 @@ class FeaturedNews extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: Colors.grey.shade200,
-                    child: const Center(
+                    color: colorScheme.surfaceContainerHighest,
+                    child: Center(
                       child: Icon(
                         Icons.image_outlined,
                         size: 60,
-                        color: Colors.grey,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   );
                 },
               ),
             ),
+
             Positioned(
               left: 15,
               right: 15,
@@ -47,7 +51,7 @@ class FeaturedNews extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Column(
@@ -55,18 +59,21 @@ class FeaturedNews extends StatelessWidget {
                   children: [
                     Text(
                       news.category.toUpperCase(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
+
                     const SizedBox(height: 5),
+
                     Text(
                       news.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                       ),
