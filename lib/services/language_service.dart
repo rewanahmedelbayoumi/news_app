@@ -67,8 +67,7 @@ class LanguageService extends ChangeNotifier {
       'edit_profile': 'Edit Profile',
       'saved_articles': 'Saved Articles',
       'reading_history': 'Reading History',
-      'notification_preferences':
-      'Notification Preferences',
+      'notification_preferences': 'Notification Preferences',
       'login_required': 'Login Required',
       'login_or_register':
       'Login or create an account to continue.',
@@ -142,16 +141,27 @@ class LanguageService extends ChangeNotifier {
       'A password reset link has been sent to your email.',
       'application_name':
       'News App',
-      'technology':
-      'Technology',
-      'business':
-      'Business',
-      'sports':
-      'Sports',
-      'health':
-      'Health',
-      'all':
-      'All',
+      'technology': 'Technology',
+      'business': 'Business',
+      'sports': 'Sports',
+      'health': 'Health',
+      'all': 'All',
+
+      'onboarding_title_1':
+      'Discover the Latest News',
+      'onboarding_description_1':
+      'Stay updated with the latest stories and important events from around the world.',
+      'onboarding_title_2':
+      'News From Around the World',
+      'onboarding_description_2':
+      'Explore stories from different categories and discover what matters to you.',
+      'onboarding_title_3':
+      'Save What Matters',
+      'onboarding_description_3':
+      'Save your favorite articles and easily come back to them whenever you want.',
+      'skip': 'Skip',
+      'continue': 'Continue',
+      'get_started': 'Get Started',
     },
 
     'ar': {
@@ -290,6 +300,22 @@ class LanguageService extends ChangeNotifier {
       'صحة',
       'all':
       'الكل',
+
+      'onboarding_title_1':
+      'اكتشف أحدث الأخبار',
+      'onboarding_description_1':
+      'ابقَ على اطلاع بأحدث القصص والأحداث المهمة من جميع أنحاء العالم.',
+      'onboarding_title_2':
+      'أخبار من جميع أنحاء العالم',
+      'onboarding_description_2':
+      'استكشف الأخبار من مختلف الأقسام واكتشف ما يهمك.',
+      'onboarding_title_3':
+      'احفظ ما يهمك',
+      'onboarding_description_3':
+      'احفظ مقالاتك المفضلة وارجع إليها بسهولة في أي وقت.',
+      'skip': 'تخطي',
+      'continue': 'متابعة',
+      'get_started': 'ابدأ الآن',
     },
 
     'es': {
@@ -431,6 +457,22 @@ class LanguageService extends ChangeNotifier {
       'Salud',
       'all':
       'Todo',
+
+      'onboarding_title_1':
+      'Descubre las últimas noticias',
+      'onboarding_description_1':
+      'Mantente al día con las últimas historias y eventos importantes de todo el mundo.',
+      'onboarding_title_2':
+      'Noticias de todo el mundo',
+      'onboarding_description_2':
+      'Explora noticias de diferentes categorías y descubre lo que te importa.',
+      'onboarding_title_3':
+      'Guarda lo que importa',
+      'onboarding_description_3':
+      'Guarda tus artículos favoritos y vuelve a ellos fácilmente cuando quieras.',
+      'skip': 'Omitir',
+      'continue': 'Continuar',
+      'get_started': 'Comenzar',
     },
 
     'fr': {
@@ -452,8 +494,7 @@ class LanguageService extends ChangeNotifier {
       'about': 'À propos',
       'privacy_policy':
       'Politique de confidentialité',
-      'preferences':
-      'Préférences',
+      'preferences': 'Préférences',
       'general': 'Général',
       'featured_news':
       'Actualités à la une',
@@ -573,6 +614,22 @@ class LanguageService extends ChangeNotifier {
       'Santé',
       'all':
       'Tout',
+
+      'onboarding_title_1':
+      'Découvrez les dernières actualités',
+      'onboarding_description_1':
+      'Restez informé des dernières histoires et des événements importants du monde entier.',
+      'onboarding_title_2':
+      'Des nouvelles du monde entier',
+      'onboarding_description_2':
+      'Explorez les actualités de différentes catégories et découvrez ce qui vous intéresse.',
+      'onboarding_title_3':
+      'Enregistrez ce qui compte',
+      'onboarding_description_3':
+      'Enregistrez vos articles préférés et retrouvez-les facilement quand vous le souhaitez.',
+      'skip': 'Passer',
+      'continue': 'Continuer',
+      'get_started': 'Commencer',
     },
 
     'de': {
@@ -716,6 +773,22 @@ class LanguageService extends ChangeNotifier {
       'Gesundheit',
       'all':
       'Alle',
+
+      'onboarding_title_1':
+      'Entdecke die neuesten Nachrichten',
+      'onboarding_description_1':
+      'Bleibe über die neuesten Geschichten und wichtigen Ereignisse aus aller Welt informiert.',
+      'onboarding_title_2':
+      'Nachrichten aus aller Welt',
+      'onboarding_description_2':
+      'Entdecke Nachrichten aus verschiedenen Kategorien und finde, was dich interessiert.',
+      'onboarding_title_3':
+      'Speichere, was wichtig ist',
+      'onboarding_description_3':
+      'Speichere deine Lieblingsartikel und rufe sie jederzeit wieder auf.',
+      'skip': 'Überspringen',
+      'continue': 'Weiter',
+      'get_started': 'Loslegen',
     },
 
     'ja': {
@@ -860,6 +933,22 @@ class LanguageService extends ChangeNotifier {
       '健康',
       'all':
       'すべて',
+
+      'onboarding_title_1':
+      '最新ニュースを発見',
+      'onboarding_description_1':
+      '世界中の最新ニュースや重要な出来事をチェックしましょう。',
+      'onboarding_title_2':
+      '世界中のニュース',
+      'onboarding_description_2':
+      'さまざまなカテゴリーのニュースを探索して、あなたに必要な情報を見つけましょう。',
+      'onboarding_title_3':
+      '大切な記事を保存',
+      'onboarding_description_3':
+      'お気に入りの記事を保存して、いつでも簡単に読み返せます。',
+      'skip': 'スキップ',
+      'continue': '次へ',
+      'get_started': '始める',
     },
 
     'zh': {
@@ -1004,6 +1093,22 @@ class LanguageService extends ChangeNotifier {
       '健康',
       'all':
       '全部',
+
+      'onboarding_title_1':
+      '发现最新新闻',
+      'onboarding_description_1':
+      '随时了解来自世界各地的最新故事和重要事件。',
+      'onboarding_title_2':
+      '来自世界各地的新闻',
+      'onboarding_description_2':
+      '探索不同类别的新闻，发现真正重要的信息。',
+      'onboarding_title_3':
+      '保存重要内容',
+      'onboarding_description_3':
+      '保存你喜欢的文章，随时轻松回来阅读。',
+      'skip': '跳过',
+      'continue': '继续',
+      'get_started': '开始使用',
     },
   };
 }

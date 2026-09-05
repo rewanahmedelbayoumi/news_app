@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
 import '../../services/language_service.dart';
+import '../onboarding_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   final AuthService authService;
@@ -76,11 +77,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       password: password,
     );
 
-    _showMessage(
-      translate('account_created'),
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => OnboardingScreen(
+          authService: widget.authService,
+          languageService: widget.languageService,
+        ),
+      ),
     );
-
-    Navigator.pop(context);
   }
 
   void _showMessage(String message) {
@@ -97,11 +102,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor:
-      theme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor:
-        theme.scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
       ),
@@ -112,8 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             vertical: 15,
           ),
           child: Column(
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 translate('create_account'),
@@ -127,8 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Text(
                 translate('create_account_description'),
                 style: TextStyle(
-                  color:
-                  colorScheme.onSurfaceVariant,
+                  color: colorScheme.onSurfaceVariant,
                   fontSize: 14,
                 ),
               ),
@@ -144,14 +145,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  hintText:
-                  translate('enter_name'),
+                  hintText: translate('enter_name'),
                   prefixIcon: const Icon(
                     Icons.person_outline,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
               ),
@@ -166,17 +165,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 8),
               TextField(
                 controller: emailController,
-                keyboardType:
-                TextInputType.emailAddress,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  hintText:
-                  translate('enter_email'),
+                  hintText: translate('enter_email'),
                   prefixIcon: const Icon(
                     Icons.email_outlined,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
               ),
@@ -193,8 +189,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 controller: passwordController,
                 obscureText: obscurePassword,
                 decoration: InputDecoration(
-                  hintText:
-                  translate('create_password'),
+                  hintText: translate('create_password'),
                   prefixIcon: const Icon(
                     Icons.lock_outline,
                   ),
@@ -212,8 +207,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
               ),
@@ -227,10 +221,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 8),
               TextField(
-                controller:
-                confirmPasswordController,
-                obscureText:
-                obscureConfirmPassword,
+                controller: confirmPasswordController,
+                obscureText: obscureConfirmPassword,
                 decoration: InputDecoration(
                   hintText: translate(
                     'confirm_your_password',
@@ -252,8 +244,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
               ),
@@ -274,17 +265,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 20),
               Row(
-                mainAxisAlignment:
-                MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Flexible(
                     child: Text(
-                      translate(
-                        'already_have_account',
-                      ),
+                      translate('already_have_account'),
                       style: TextStyle(
-                        color: colorScheme
-                            .onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),

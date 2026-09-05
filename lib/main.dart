@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'screens/main_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/auth_service.dart';
 import 'services/language_service.dart';
 import 'services/theme_service.dart';
@@ -87,8 +88,7 @@ class _NewsAppState extends State<NewsApp> {
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        scaffoldBackgroundColor:
-        const Color(0xFF121212),
+        scaffoldBackgroundColor: const Color(0xFF121212),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.white,
           brightness: Brightness.dark,
@@ -99,7 +99,7 @@ class _NewsAppState extends State<NewsApp> {
           ? ThemeMode.dark
           : ThemeMode.light,
 
-      home: MainScreen(
+      home: SplashScreen(
         themeService: themeService,
         authService: authService,
         languageService: languageService,

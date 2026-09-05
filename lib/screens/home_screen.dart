@@ -118,6 +118,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openSearch() {
+    showSearch(
+      context: context,
+      delegate: _NewsSearchDelegate(
+        authService: widget.authService,
+        languageService: widget.languageService,
+      ),
+    );
+  }
+
   void _openSaved() {
     if (!isLoggedIn) {
       Navigator.pop(context);
@@ -281,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onMenuPressed: () {
           _scaffoldKey.currentState?.openDrawer();
         },
-        onSearchPressed: () {},
+        onSearchPressed: _openSearch,
       ),
       drawer: _buildDrawer(colorScheme),
       body: SafeArea(
@@ -661,6 +671,201 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _NewsSearchDelegate extends SearchDelegate<NewsModel?> {
+  final AuthService? authService;
+  final LanguageService? languageService;
+
+  _NewsSearchDelegate({
+    this.authService,
+    this.languageService,
+  });
+
+  String translate(String key) {
+    return languageService?.translate(key) ?? key;
+  }
+
+  String translateCategory(String category) {
+    switch (category) {
+      case 'All':
+        return translate('all');
+      case 'Business':
+        return translate('business');
+      case 'Sports':
+        return translate('sports');
+      case 'Technology':
+        return translate('technology');
+      case 'Health':
+        return translate('health');
+      default:
+        return category;
+    }
+  }
+
+  List<NewsModel> get results {
+    final queryText = query.trim().toLowerCase();
+
+    if (queryText.isEmpty) {
+      return [];
+    }
+
+    return NewsData.news.where((news) {
+      final title = news.title.toLowerCase();
+      final description = news.description.toLowerCase();
+      final category = news.category.toLowerCase();
+
+      return title.contains(queryText) ||
+          description.contains(queryText) ||
+          category.contains(queryText);
+    }).toList();
+  }
+
+  @override
+  String get searchFieldLabel {
+    return translate('search');
+  }
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      if (query.isNotEmpty)
+        IconButton(
+          onPressed: () {
+            query = '';
+          },
+          icon: const Icon(Icons.clear),
+        ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        close(context, null);
+      },
+      icon: const Icon(Icons.arrow_back),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return _buildResults(context);
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return _buildResults(context);
+  }
+
+  Widget _buildResults(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    if (query.trim().isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment:
+          MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_rounded,
+              size: 65,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              translate('search'),
+              style: TextStyle(
+                color: colorScheme.onSurface,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (results.isEmpty) {
+      return Center(
+        child: Text(
+          translate('no_news_found'),
+          style: TextStyle(
+            color: colorScheme.onSurfaceVariant,
+            fontSize: 16,
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        final news = results[index];
+
+        return Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          elevation: 0,
+          color: colorScheme.surfaceContainerHighest,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(12),
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                news.image,
+                width: 75,
+                height: 75,
+                fit: BoxFit.cover,
+                errorBuilder:
+                    (context, error, stackTrace) {
+                  return Container(
+                    width: 75,
+                    height: 75,
+                    color: colorScheme.surface,
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      color:
+                      colorScheme.onSurfaceVariant,
+                    ),
+                  );
+                },
+              ),
+            ),
+            title: Text(
+              news.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: Padding(
+              padding:
+              const EdgeInsets.only(top: 6),
+              child: Text(
+                translateCategory(news.category),
+                style: TextStyle(
+                  color:
+                  colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            onTap: () {
+              close(context, news);
+            },
+          ),
+        );
+      },
     );
   }
 }
