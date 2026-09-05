@@ -1,38 +1,55 @@
 import 'package:flutter/material.dart';
+
+import '../services/theme_service.dart';
 import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final ThemeService themeService;
+
+  const ProfileScreen({
+    super.key,
+    required this.themeService,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
+
         title: const Text(
           'Profile',
           style: TextStyle(
-            color: Colors.black,
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
+
         centerTitle: true,
       ),
+
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           const SizedBox(height: 15),
 
-          const CircleAvatar(
+          CircleAvatar(
             radius: 45,
-            backgroundColor: Colors.black,
+            backgroundColor: isDark
+                ? Colors.white
+                : Colors.black,
             child: Icon(
               Icons.person,
               size: 50,
-              color: Colors.white,
+              color: isDark
+                  ? Colors.black
+                  : Colors.white,
             ),
           ),
 
@@ -80,7 +97,9 @@ class ProfileScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const SettingsScreen(),
+                  builder: (_) => SettingsScreen(
+                    themeService: themeService,
+                  ),
                 ),
               );
             },
@@ -106,27 +125,32 @@ class _ProfileOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
+
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
+          color: Theme.of(context)
+              .colorScheme
+              .surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
           icon,
-          color: Colors.black,
         ),
       ),
+
       title: Text(
         title,
         style: const TextStyle(
           fontWeight: FontWeight.w600,
         ),
       ),
+
       trailing: const Icon(
         Icons.arrow_forward_ios,
         size: 16,
       ),
+
       onTap: onTap,
     );
   }

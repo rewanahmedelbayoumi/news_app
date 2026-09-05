@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../services/theme_service.dart';
+
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final ThemeService themeService;
+
+  const SettingsScreen({
+    super.key,
+    required this.themeService,
+  });
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -9,33 +16,33 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool notificationsEnabled = true;
-  bool darkModeEnabled = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
+    final isDarkMode = widget.themeService.isDarkMode;
 
+    return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
+        backgroundColor:
+        Theme.of(context).scaffoldBackgroundColor,
+        surfaceTintColor: Colors.transparent,
+
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+
         title: const Text(
           'Settings',
           style: TextStyle(
-            color: Colors.black,
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
+
         centerTitle: true,
       ),
 
@@ -55,7 +62,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _SettingsSwitch(
             icon: Icons.notifications_none,
             title: 'Notifications',
-            subtitle: 'Receive notifications about latest news',
+            subtitle:
+            'Receive notifications about latest news',
             value: notificationsEnabled,
             onChanged: (value) {
               setState(() {
@@ -69,12 +77,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _SettingsSwitch(
             icon: Icons.dark_mode_outlined,
             title: 'Dark Mode',
-            subtitle: 'Change the appearance of the app',
-            value: darkModeEnabled,
+            subtitle:
+            'Change the appearance of the app',
+            value: isDarkMode,
             onChanged: (value) {
-              setState(() {
-                darkModeEnabled = value;
-              });
+              widget.themeService.toggleTheme(value);
+              setState(() {});
             },
           ),
 
@@ -145,22 +153,24 @@ class _SettingsSwitch extends StatelessWidget {
         horizontal: 15,
         vertical: 10,
       ),
+
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: Theme.of(context)
+            .colorScheme
+            .surfaceContainerHighest,
         borderRadius: BorderRadius.circular(15),
       ),
+
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: Colors.black,
-          ),
+          Icon(icon),
 
           const SizedBox(width: 15),
 
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+              CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
@@ -168,7 +178,9 @@ class _SettingsSwitch extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+
                 const SizedBox(height: 3),
+
                 Text(
                   subtitle,
                   style: const TextStyle(
@@ -211,13 +223,12 @@ class _SettingsOption extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
+          color: Theme.of(context)
+              .colorScheme
+              .surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(
-          icon,
-          color: Colors.black,
-        ),
+        child: Icon(icon),
       ),
 
       title: Text(

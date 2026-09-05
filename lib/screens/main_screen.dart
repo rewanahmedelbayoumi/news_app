@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 
-import 'home_screen.dart';
-import 'saved_screen.dart';
-import 'profile_screen.dart';
+import '../services/theme_service.dart';
 import '../widgets/bottom_nav_bar.dart';
+import 'home_screen.dart';
+import 'profile_screen.dart';
+import 'saved_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final ThemeService themeService;
+
+  const MainScreen({
+    super.key,
+    required this.themeService,
+  });
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -27,7 +33,9 @@ class _MainScreenState extends State<MainScreen> {
             key: ValueKey(selectedIndex == 1),
           ),
 
-          const ProfileScreen(),
+          ProfileScreen(
+            themeService: widget.themeService,
+          ),
         ],
       ),
 
