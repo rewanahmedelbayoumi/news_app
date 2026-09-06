@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-
-import 'language_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService extends ChangeNotifier {
+  static const String _rememberMeKey = 'remember_me';
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   StreamSubscription<User?>? _authSubscription;
@@ -45,6 +46,19 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> initializeSession() async {
+    final preferences = await SharedPreferences.getInstance();
+
+    final rememberMe =
+        preferences.getBool(_rememberMeKey) ?? false;
+
+    if (!rememberMe && _auth.currentUser != null) {
+      await _auth.signOut();
+    }
+
+    _updateUser(_auth.currentUser);
+  }
+
   Future<String?> register({
     required String name,
     required String email,
@@ -82,8 +96,17 @@ class AuthService extends ChangeNotifier {
   Future<String?> login({
     required String email,
     required String password,
+    required bool rememberMe,
   }) async {
     try {
+      final preferences =
+      await SharedPreferences.getInstance();
+
+      await preferences.setBool(
+        _rememberMeKey,
+        rememberMe,
+      );
+
       await _auth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
@@ -122,6 +145,14 @@ class AuthService extends ChangeNotifier {
   Future<String?> logout() async {
     try {
       await _auth.signOut();
+
+      final preferences =
+      await SharedPreferences.getInstance();
+
+      await preferences.setBool(
+        _rememberMeKey,
+        false,
+      );
 
       _name = null;
       _email = null;

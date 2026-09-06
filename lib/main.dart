@@ -16,42 +16,59 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const NewsApp());
+  final AuthService authService = AuthService();
+
+  await authService.initializeSession();
+
+  runApp(
+    NewsApp(
+      authService: authService,
+    ),
+  );
 }
 
 class NewsApp extends StatefulWidget {
-  const NewsApp({super.key});
+  final AuthService authService;
+
+  const NewsApp({
+    super.key,
+    required this.authService,
+  });
 
   @override
   State<NewsApp> createState() => _NewsAppState();
 }
 
 class _NewsAppState extends State<NewsApp> {
-  final ThemeService themeService = ThemeService();
-  final AuthService authService = AuthService();
-  final LanguageService languageService = LanguageService();
+  late final ThemeService themeService;
+  late final LanguageService languageService;
 
   @override
   void initState() {
     super.initState();
 
+    themeService = ThemeService();
+    languageService = LanguageService();
+
     themeService.addListener(_appChanged);
-    authService.addListener(_appChanged);
+    widget.authService.addListener(_appChanged);
     languageService.addListener(_appChanged);
   }
 
   void _appChanged() {
+    if (!mounted) return;
+
     setState(() {});
   }
 
   @override
   void dispose() {
     themeService.removeListener(_appChanged);
-    authService.removeListener(_appChanged);
+    widget.authService.removeListener(_appChanged);
     languageService.removeListener(_appChanged);
 
     themeService.dispose();
-    authService.dispose();
+    widget.authService.dispose();
     languageService.dispose();
 
     super.dispose();
@@ -102,7 +119,7 @@ class _NewsAppState extends State<NewsApp> {
           : ThemeMode.light,
       home: SplashScreen(
         themeService: themeService,
-        authService: authService,
+        authService: widget.authService,
         languageService: languageService,
       ),
     );

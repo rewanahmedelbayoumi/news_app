@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/auth_service.dart';
 import '../../services/language_service.dart';
@@ -20,6 +21,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  static const String _rememberMeKey = 'remember_me';
+  static const String _savedEmailKey = 'saved_login_email';
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -32,10 +36,54 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadRememberMe();
+  }
+
+  Future<void> _loadRememberMe() async {
+    final preferences = await SharedPreferences.getInstance();
+
+    final savedRememberMe =
+        preferences.getBool(_rememberMeKey) ?? false;
+
+    final savedEmail =
+        preferences.getString(_savedEmailKey) ?? '';
+
+    if (!mounted) return;
+
+    setState(() {
+      rememberMe = savedRememberMe;
+
+      if (savedRememberMe && savedEmail.isNotEmpty) {
+        emailController.text = savedEmail;
+      }
+    });
+  }
+
+  @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveRememberMe(String email) async {
+    final preferences = await SharedPreferences.getInstance();
+
+    await preferences.setBool(
+      _rememberMeKey,
+      rememberMe,
+    );
+
+    if (rememberMe) {
+      await preferences.setString(
+        _savedEmailKey,
+        email,
+      );
+    } else {
+      await preferences.remove(_savedEmailKey);
+    }
   }
 
   Future<void> _login() async {
@@ -58,18 +106,27 @@ class _LoginScreenState extends State<LoginScreen> {
     final error = await widget.authService.login(
       email: email,
       password: password,
+      rememberMe: rememberMe,
     );
+
+    if (!mounted) return;
+
+    if (error != null) {
+      setState(() {
+        isLoading = false;
+      });
+
+      _showMessage(error);
+      return;
+    }
+
+    await _saveRememberMe(email);
 
     if (!mounted) return;
 
     setState(() {
       isLoading = false;
     });
-
-    if (error != null) {
-      _showMessage(error);
-      return;
-    }
 
     Navigator.pop(context);
   }
@@ -89,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
         builder: (_) => ForgotPasswordScreen(
           authService: widget.authService,
           languageService: widget.languageService,
-        )
+        ),
       ),
     );
   }
@@ -288,7 +345,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   TextButton(
-                    onPressed: isLoading ? null : _openRegister,
+                    onPressed:
+                    isLoading ? null : _openRegister,
                     child: Text(
                       translate('register'),
                     ),
