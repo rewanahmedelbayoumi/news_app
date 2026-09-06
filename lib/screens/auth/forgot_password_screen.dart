@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../services/auth_service.dart';
 import '../../services/language_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
+  final AuthService authService;
   final LanguageService? languageService;
 
   const ForgotPasswordScreen({
     super.key,
+    required this.authService,
     this.languageService,
   });
 
@@ -19,6 +22,8 @@ class _ForgotPasswordScreenState
     extends State<ForgotPasswordScreen> {
   final emailController = TextEditingController();
 
+  bool isLoading = false;
+
   String translate(String key) {
     return widget.languageService?.translate(key) ?? key;
   }
@@ -29,15 +34,34 @@ class _ForgotPasswordScreenState
     super.dispose();
   }
 
-  void _sendResetLink() {
-    if (emailController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            translate('enter_email'),
-          ),
-        ),
+  Future<void> _sendResetLink() async {
+    if (isLoading) return;
+
+    final email = emailController.text.trim();
+
+    if (email.isEmpty) {
+      _showMessage(
+        translate('enter_email'),
       );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final error = await widget.authService.resetPassword(
+      email: email,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (error != null) {
+      _showMessage(error);
       return;
     }
 
@@ -57,13 +81,19 @@ class _ForgotPasswordScreenState
                 Navigator.pop(dialogContext);
                 Navigator.pop(context);
               },
-              child: Text(
-                'OK',
-              ),
+              child: const Text('OK'),
             ),
           ],
         );
       },
+    );
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
     );
   }
 
@@ -73,19 +103,16 @@ class _ForgotPasswordScreenState
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor:
-      theme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor:
-        theme.scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(25),
         child: Column(
-          crossAxisAlignment:
-          CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 30),
             Text(
@@ -100,8 +127,7 @@ class _ForgotPasswordScreenState
             Text(
               translate('forgot_password_description'),
               style: TextStyle(
-                color:
-                colorScheme.onSurfaceVariant,
+                color: colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),
@@ -116,17 +142,15 @@ class _ForgotPasswordScreenState
             const SizedBox(height: 8),
             TextField(
               controller: emailController,
-              keyboardType:
-              TextInputType.emailAddress,
+              enabled: !isLoading,
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                hintText:
-                translate('enter_email'),
+                hintText: translate('enter_email'),
                 prefixIcon: const Icon(
                   Icons.email_outlined,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius:
-                  BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(15),
                 ),
               ),
             ),
@@ -135,8 +159,17 @@ class _ForgotPasswordScreenState
               width: double.infinity,
               height: 55,
               child: FilledButton(
-                onPressed: _sendResetLink,
-                child: Text(
+                onPressed: isLoading ? null : _sendResetLink,
+                child: isLoading
+                    ? SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: colorScheme.onPrimary,
+                  ),
+                )
+                    : Text(
                   translate('send_reset_link'),
                   style: const TextStyle(
                     fontSize: 16,

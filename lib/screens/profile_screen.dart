@@ -165,80 +165,126 @@ class ProfileScreen extends StatelessWidget {
       text: authService.email ?? '',
     );
 
+    bool isLoading = false;
+
     showDialog(
       context: context,
       builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(
-            translate('edit_profile'),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: translate('name'),
-                  prefixIcon: const Icon(
-                    Icons.person_outline,
-                  ),
-                ),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(
+                translate('edit_profile'),
               ),
-              const SizedBox(height: 15),
-              TextField(
-                controller: emailController,
-                keyboardType:
-                TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: translate('email'),
-                  prefixIcon: const Icon(
-                    Icons.email_outlined,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
-              child: Text(
-                translate('cancel'),
-              ),
-            ),
-            FilledButton(
-              onPressed: () {
-                final name =
-                nameController.text.trim();
-                final email =
-                emailController.text.trim();
-
-                if (name.isEmpty || email.isEmpty) {
-                  return;
-                }
-
-                authService.updateProfile(
-                  name: name,
-                  email: email,
-                );
-
-                Navigator.pop(dialogContext);
-
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      translate('profile_updated'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    enabled: !isLoading,
+                    decoration: InputDecoration(
+                      labelText: translate('name'),
+                      prefixIcon: const Icon(
+                        Icons.person_outline,
+                      ),
                     ),
                   ),
-                );
-              },
-              child: Text(
-                translate('save'),
+                  const SizedBox(height: 15),
+                  TextField(
+                    controller: emailController,
+                    enabled: !isLoading,
+                    keyboardType:
+                    TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: translate('email'),
+                      prefixIcon: const Icon(
+                        Icons.email_outlined,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                    Navigator.pop(dialogContext);
+                  },
+                  child: Text(
+                    translate('cancel'),
+                  ),
+                ),
+                FilledButton(
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                    final name =
+                    nameController.text.trim();
+                    final email =
+                    emailController.text.trim();
+
+                    if (name.isEmpty ||
+                        email.isEmpty) {
+                      return;
+                    }
+
+                    setDialogState(() {
+                      isLoading = true;
+                    });
+
+                    final error =
+                    await authService.updateProfile(
+                      name: name,
+                      email: email,
+                    );
+
+                    if (!context.mounted) return;
+
+                    if (error != null) {
+                      setDialogState(() {
+                        isLoading = false;
+                      });
+
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(
+                        SnackBar(
+                          content: Text(error),
+                        ),
+                      );
+
+                      return;
+                    }
+
+                    Navigator.pop(dialogContext);
+
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          translate(
+                            'profile_updated',
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child: isLoading
+                      ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child:
+                    CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  )
+                      : Text(
+                    translate('save'),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -248,42 +294,67 @@ class ProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(
-            translate('logout'),
-          ),
-          content: Text(
-            translate('logout_confirmation'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
-              child: Text(
-                translate('cancel'),
-              ),
-            ),
-            FilledButton(
-              onPressed: () {
-                authService.logout();
+        bool isLoading = false;
 
-                Navigator.pop(dialogContext);
-
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      translate('logged_out'),
-                    ),
-                  ),
-                );
-              },
-              child: Text(
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(
                 translate('logout'),
               ),
-            ),
-          ],
+              content: Text(
+                translate('logout_confirmation'),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                    Navigator.pop(dialogContext);
+                  },
+                  child: Text(
+                    translate('cancel'),
+                  ),
+                ),
+                FilledButton(
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                    setDialogState(() {
+                      isLoading = true;
+                    });
+
+                    await authService.logout();
+
+                    if (!context.mounted) return;
+
+                    Navigator.pop(dialogContext);
+
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          translate('logged_out'),
+                        ),
+                      ),
+                    );
+                  },
+                  child: isLoading
+                      ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child:
+                    CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  )
+                      : Text(
+                    translate('logout'),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -305,9 +376,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isDark =
-        theme.brightness == Brightness.dark;
-
+    final isDark = theme.brightness == Brightness.dark;
     final isLoggedIn = authService.isLoggedIn;
 
     if (!isLoggedIn) {

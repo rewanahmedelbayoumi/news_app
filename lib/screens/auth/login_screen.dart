@@ -25,6 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool obscurePassword = true;
   bool rememberMe = false;
+  bool isLoading = false;
 
   String translate(String key) {
     return widget.languageService?.translate(key) ?? key;
@@ -37,7 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() {
+  Future<void> _login() async {
+    if (isLoading) return;
+
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
@@ -48,15 +51,23 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    final success = widget.authService.login(
+    setState(() {
+      isLoading = true;
+    });
+
+    final error = await widget.authService.login(
       email: email,
       password: password,
     );
 
-    if (!success) {
-      _showMessage(
-        translate('invalid_email_password'),
-      );
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (error != null) {
+      _showMessage(error);
       return;
     }
 
@@ -76,8 +87,9 @@ class _LoginScreenState extends State<LoginScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => ForgotPasswordScreen(
+          authService: widget.authService,
           languageService: widget.languageService,
-        ),
+        )
       ),
     );
   }
@@ -100,8 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor:
-      theme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
@@ -109,8 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
             vertical: 40,
           ),
           child: Column(
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 30),
               Center(
@@ -119,8 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 75,
                   decoration: BoxDecoration(
                     color: colorScheme.onSurface,
-                    borderRadius:
-                    BorderRadius.circular(22),
+                    borderRadius: BorderRadius.circular(22),
                   ),
                   child: Icon(
                     Icons.newspaper_rounded,
@@ -147,8 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   translate('login_to_save_read'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color:
-                    colorScheme.onSurfaceVariant,
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 14,
                   ),
                 ),
@@ -164,16 +172,15 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 8),
               TextField(
                 controller: emailController,
-                keyboardType:
-                TextInputType.emailAddress,
+                keyboardType: TextInputType.emailAddress,
+                enabled: !isLoading,
                 decoration: InputDecoration(
                   hintText: translate('enter_email'),
                   prefixIcon: const Icon(
                     Icons.email_outlined,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
               ),
@@ -189,14 +196,16 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: passwordController,
                 obscureText: obscurePassword,
+                enabled: !isLoading,
                 decoration: InputDecoration(
-                  hintText:
-                  translate('enter_email_password'),
+                  hintText: translate('enter_password'),
                   prefixIcon: const Icon(
                     Icons.lock_outline,
                   ),
                   suffixIcon: IconButton(
-                    onPressed: () {
+                    onPressed: isLoading
+                        ? null
+                        : () {
                       setState(() {
                         obscurePassword =
                         !obscurePassword;
@@ -209,8 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
               ),
@@ -219,10 +227,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Checkbox(
                     value: rememberMe,
-                    onChanged: (value) {
+                    onChanged: isLoading
+                        ? null
+                        : (value) {
                       setState(() {
-                        rememberMe =
-                            value ?? false;
+                        rememberMe = value ?? false;
                       });
                     },
                   ),
@@ -234,7 +243,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const Spacer(),
                   TextButton(
-                    onPressed: _openForgotPassword,
+                    onPressed:
+                    isLoading ? null : _openForgotPassword,
                     child: Text(
                       translate('forgot_password'),
                     ),
@@ -246,8 +256,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 height: 55,
                 child: FilledButton(
-                  onPressed: _login,
-                  child: Text(
+                  onPressed: isLoading ? null : _login,
+                  child: isLoading
+                      ? SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: colorScheme.onPrimary,
+                    ),
+                  )
+                      : Text(
                     translate('login'),
                     style: const TextStyle(
                       fontSize: 16,
@@ -258,20 +277,18 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 25),
               Row(
-                mainAxisAlignment:
-                MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Flexible(
                     child: Text(
                       translate('dont_have_account'),
                       style: TextStyle(
-                        color:
-                        colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
                   TextButton(
-                    onPressed: _openRegister,
+                    onPressed: isLoading ? null : _openRegister,
                     child: Text(
                       translate('register'),
                     ),

@@ -21,6 +21,8 @@ class NewsDetailsScreen extends StatefulWidget {
 
 class _NewsDetailsScreenState
     extends State<NewsDetailsScreen> {
+  bool isSaving = false;
+
   String translate(String key) {
     return widget.languageService?.translate(key) ?? key;
   }
@@ -40,24 +42,35 @@ class _NewsDetailsScreenState
     }
   }
 
+  Future<void> _toggleSaved() async {
+    if (isSaving) return;
+
+    setState(() {
+      isSaving = true;
+    });
+
+    await SavedNewsService.toggleSaved(widget.news);
+
+    if (!mounted) return;
+
+    setState(() {
+      isSaving = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final isSaved =
-    SavedNewsService.isSaved(widget.news);
+    final isSaved = SavedNewsService.isSaved(widget.news);
 
     return Scaffold(
-      backgroundColor:
-      theme.scaffoldBackgroundColor,
-
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor:
-        theme.scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -67,7 +80,6 @@ class _NewsDetailsScreenState
             color: colorScheme.onSurface,
           ),
         ),
-
         title: Text(
           translate('article'),
           style: TextStyle(
@@ -76,19 +88,20 @@ class _NewsDetailsScreenState
             fontWeight: FontWeight.bold,
           ),
         ),
-
         centerTitle: true,
-
         actions: [
           IconButton(
-            onPressed: () {
-              setState(() {
-                SavedNewsService.toggleSaved(
-                  widget.news,
-                );
-              });
-            },
-            icon: Icon(
+            onPressed: isSaving ? null : _toggleSaved,
+            icon: isSaving
+                ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            )
+                : Icon(
               isSaved
                   ? Icons.bookmark
                   : Icons.bookmark_outline,
@@ -97,15 +110,12 @@ class _NewsDetailsScreenState
           ),
         ],
       ),
-
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment:
-          CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius:
-              const BorderRadius.vertical(
+              borderRadius: const BorderRadius.vertical(
                 bottom: Radius.circular(25),
               ),
               child: Image.asset(
@@ -121,35 +131,32 @@ class _NewsDetailsScreenState
                   return Container(
                     width: double.infinity,
                     height: 250,
-                    color: colorScheme
-                        .surfaceContainerHighest,
+                    color:
+                    colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.image_outlined,
                       size: 70,
-                      color: colorScheme
-                          .onSurfaceVariant,
+                      color:
+                      colorScheme.onSurfaceVariant,
                     ),
                   );
                 },
               ),
             ),
-
             Padding(
-              padding:
-              const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment:
                 CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding:
-                    const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 7,
                     ),
                     decoration: BoxDecoration(
-                      color: colorScheme
-                          .surfaceContainerHighest,
+                      color:
+                      colorScheme.surfaceContainerHighest,
                       borderRadius:
                       BorderRadius.circular(20),
                     ),
@@ -158,92 +165,70 @@ class _NewsDetailsScreenState
                         widget.news.category,
                       ).toUpperCase(),
                       style: TextStyle(
-                        color:
-                        colorScheme.onSurface,
+                        color: colorScheme.onSurface,
                         fontSize: 11,
-                        fontWeight:
-                        FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 15),
-
                   Text(
                     widget.news.title,
                     style: TextStyle(
-                      color:
-                      colorScheme.onSurface,
+                      color: colorScheme.onSurface,
                       fontSize: 28,
                       height: 1.2,
-                      fontWeight:
-                      FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 12),
-
                   Row(
                     children: [
                       Icon(
                         Icons.access_time,
                         size: 17,
-                        color: colorScheme
-                            .onSurfaceVariant,
+                        color:
+                        colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         widget.news.time,
                         style: TextStyle(
-                          color: colorScheme
-                              .onSurfaceVariant,
+                          color:
+                          colorScheme.onSurfaceVariant,
                           fontSize: 13,
                         ),
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 25),
-
                   Text(
                     widget.news.description,
                     style: TextStyle(
-                      color:
-                      colorScheme.onSurface,
+                      color: colorScheme.onSurface,
                       fontSize: 17,
                       height: 1.7,
                     ),
                   ),
-
                   const SizedBox(height: 25),
-
                   Text(
-                    translate(
-                      'about_this_story',
-                    ),
+                    translate('about_this_story'),
                     style: TextStyle(
-                      color:
-                      colorScheme.onSurface,
+                      color: colorScheme.onSurface,
                       fontSize: 20,
-                      fontWeight:
-                      FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 10),
-
                   Text(
-                    translate(
-                      'story_details',
-                    ),
+                    translate('story_details'),
                     style: TextStyle(
-                      color: colorScheme
-                          .onSurfaceVariant,
+                      color:
+                      colorScheme.onSurfaceVariant,
                       fontSize: 15,
                       height: 1.6,
                     ),
                   ),
-
                   const SizedBox(height: 35),
                 ],
               ),

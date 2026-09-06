@@ -25,6 +25,8 @@ class NewsCard extends StatefulWidget {
 }
 
 class _NewsCardState extends State<NewsCard> {
+  bool isSaving = false;
+
   bool get isLoggedIn {
     return widget.authService?.isLoggedIn ?? false;
   }
@@ -209,14 +211,24 @@ class _NewsCardState extends State<NewsCard> {
     );
   }
 
-  void _toggleSaved() {
-    if (!isLoggedIn) {
-      _showLoginRequired();
+  Future<void> _toggleSaved() async {
+    if (!isLoggedIn || isSaving) {
+      if (!isLoggedIn) {
+        _showLoginRequired();
+      }
       return;
     }
 
     setState(() {
-      SavedNewsService.toggleSaved(widget.news);
+      isSaving = true;
+    });
+
+    await SavedNewsService.toggleSaved(widget.news);
+
+    if (!mounted) return;
+
+    setState(() {
+      isSaving = false;
     });
   }
 
@@ -277,8 +289,19 @@ class _NewsCardState extends State<NewsCard> {
                         ),
                       ),
                       IconButton(
-                        onPressed: _toggleSaved,
-                        icon: Icon(
+                        onPressed: isSaving
+                            ? null
+                            : _toggleSaved,
+                        icon: isSaving
+                            ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        )
+                            : Icon(
                           isSaved
                               ? Icons.bookmark
                               : Icons.bookmark_outline,
@@ -287,7 +310,10 @@ class _NewsCardState extends State<NewsCard> {
                               : colorScheme.onSurfaceVariant,
                         ),
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                        constraints: const BoxConstraints(
+                          minWidth: 40,
+                          minHeight: 40,
+                        ),
                       ),
                     ],
                   ),

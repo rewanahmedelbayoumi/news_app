@@ -26,6 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
+  bool isLoading = false;
 
   String translate(String key) {
     return widget.languageService?.translate(key) ?? key;
@@ -40,12 +41,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _register() {
+  Future<void> _register() async {
+    if (isLoading) return;
+
     final name = nameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
-    final confirmPassword =
-    confirmPasswordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
 
     if (name.isEmpty ||
         email.isEmpty ||
@@ -71,11 +73,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    widget.authService.register(
+    setState(() {
+      isLoading = true;
+    });
+
+    final error = await widget.authService.register(
       name: name,
       email: email,
       password: password,
     );
+
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (error != null) {
+      _showMessage(error);
+      return;
+    }
 
     Navigator.pushReplacement(
       context,
@@ -144,6 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 8),
               TextField(
                 controller: nameController,
+                enabled: !isLoading,
                 decoration: InputDecoration(
                   hintText: translate('enter_name'),
                   prefixIcon: const Icon(
@@ -165,6 +183,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 8),
               TextField(
                 controller: emailController,
+                enabled: !isLoading,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   hintText: translate('enter_email'),
@@ -187,6 +206,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 8),
               TextField(
                 controller: passwordController,
+                enabled: !isLoading,
                 obscureText: obscurePassword,
                 decoration: InputDecoration(
                   hintText: translate('create_password'),
@@ -194,7 +214,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Icons.lock_outline,
                   ),
                   suffixIcon: IconButton(
-                    onPressed: () {
+                    onPressed: isLoading
+                        ? null
+                        : () {
                       setState(() {
                         obscurePassword =
                         !obscurePassword;
@@ -222,6 +244,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 8),
               TextField(
                 controller: confirmPasswordController,
+                enabled: !isLoading,
                 obscureText: obscureConfirmPassword,
                 decoration: InputDecoration(
                   hintText: translate(
@@ -231,7 +254,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Icons.lock_outline,
                   ),
                   suffixIcon: IconButton(
-                    onPressed: () {
+                    onPressed: isLoading
+                        ? null
+                        : () {
                       setState(() {
                         obscureConfirmPassword =
                         !obscureConfirmPassword;
@@ -253,8 +278,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 width: double.infinity,
                 height: 55,
                 child: FilledButton(
-                  onPressed: _register,
-                  child: Text(
+                  onPressed: isLoading ? null : _register,
+                  child: isLoading
+                      ? SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: colorScheme.onPrimary,
+                    ),
+                  )
+                      : Text(
                     translate('create_account'),
                     style: const TextStyle(
                       fontSize: 16,
@@ -276,7 +310,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
+                    onPressed: isLoading
+                        ? null
+                        : () {
                       Navigator.pop(context);
                     },
                     child: Text(

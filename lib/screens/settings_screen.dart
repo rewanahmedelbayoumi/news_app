@@ -66,6 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
     final isDarkMode =
         widget.themeService.isDarkMode;
 
@@ -176,7 +177,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _SettingsOption(
             icon: Icons.privacy_tip_outlined,
             title: translate('privacy_policy'),
-            subtitle: translate('privacy_description'),
+            subtitle: translate(
+              'privacy_description',
+            ),
             onTap: () {
               _showPrivacyPolicy(context);
             },
@@ -229,9 +232,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     colorScheme.primary,
                   )
                       : null,
-                  onTap: () {
-                    widget.languageService
+                  onTap: () async {
+                    await widget.languageService
                         .changeLanguage(code);
+
+                    if (!context.mounted) return;
 
                     Navigator.pop(dialogContext);
 
@@ -311,7 +316,8 @@ class _SettingsSwitch extends StatelessWidget {
       decoration: BoxDecoration(
         color:
         colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius:
+        BorderRadius.circular(15),
       ),
       child: Row(
         children: [
@@ -330,7 +336,8 @@ class _SettingsSwitch extends StatelessWidget {
                   style: TextStyle(
                     color:
                     colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
+                    fontWeight:
+                    FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -380,7 +387,8 @@ class _SettingsOption extends StatelessWidget {
         decoration: BoxDecoration(
           color:
           colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius:
+          BorderRadius.circular(12),
         ),
         child: Icon(
           icon,

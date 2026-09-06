@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageService extends ChangeNotifier {
+  static const String _languageKey = 'language_code';
+
   String _languageCode = 'en';
 
   String get languageCode => _languageCode;
@@ -15,7 +18,25 @@ class LanguageService extends ChangeNotifier {
     'zh',
   ];
 
-  void changeLanguage(String languageCode) {
+  LanguageService() {
+    _loadLanguage();
+  }
+
+  Future<void> _loadLanguage() async {
+    final preferences =
+    await SharedPreferences.getInstance();
+
+    final savedLanguage =
+    preferences.getString(_languageKey);
+
+    if (savedLanguage != null &&
+        supportedLanguages.contains(savedLanguage)) {
+      _languageCode = savedLanguage;
+      notifyListeners();
+    }
+  }
+
+  Future<void> changeLanguage(String languageCode) async {
     if (!supportedLanguages.contains(languageCode)) {
       return;
     }
@@ -25,7 +46,16 @@ class LanguageService extends ChangeNotifier {
     }
 
     _languageCode = languageCode;
+
     notifyListeners();
+
+    final preferences =
+    await SharedPreferences.getInstance();
+
+    await preferences.setString(
+      _languageKey,
+      languageCode,
+    );
   }
 
   String translate(String key) {
@@ -67,7 +97,8 @@ class LanguageService extends ChangeNotifier {
       'edit_profile': 'Edit Profile',
       'saved_articles': 'Saved Articles',
       'reading_history': 'Reading History',
-      'notification_preferences': 'Notification Preferences',
+      'notification_preferences':
+      'Notification Preferences',
       'login_required': 'Login Required',
       'login_or_register':
       'Login or create an account to continue.',
@@ -83,8 +114,7 @@ class LanguageService extends ChangeNotifier {
       'send_reset_link': 'Send Reset Link',
       'already_have_account':
       'Already have an account?',
-      'dont_have_account':
-      "Don't have an account?",
+      'dont_have_account': "Don't have an account?",
       'good_morning': 'Good Morning 👋',
       'whats_happening_today':
       'What’s happening today?',
@@ -146,7 +176,6 @@ class LanguageService extends ChangeNotifier {
       'sports': 'Sports',
       'health': 'Health',
       'all': 'All',
-
       'onboarding_title_1':
       'Discover the Latest News',
       'onboarding_description_1':
@@ -190,10 +219,8 @@ class LanguageService extends ChangeNotifier {
       'no_news_found':
       'لم يتم العثور على أخبار',
       'welcome': 'مرحبًا',
-      'welcome_back':
-      'مرحبًا بعودتك',
-      'create_account':
-      'إنشاء حساب',
+      'welcome_back': 'مرحبًا بعودتك',
+      'create_account': 'إنشاء حساب',
       'create_account_description':
       'أنشئ حسابًا للحصول على تجربة الأخبار الكاملة.',
       'edit_profile':
@@ -208,18 +235,13 @@ class LanguageService extends ChangeNotifier {
       'تسجيل الدخول مطلوب',
       'login_or_register':
       'سجل الدخول أو أنشئ حسابًا للمتابعة.',
-      'email':
-      'البريد الإلكتروني',
-      'password':
-      'كلمة المرور',
+      'email': 'البريد الإلكتروني',
+      'password': 'كلمة المرور',
       'confirm_password':
       'تأكيد كلمة المرور',
-      'full_name':
-      'الاسم بالكامل',
-      'name':
-      'الاسم',
-      'remember_me':
-      'تذكرني',
+      'full_name': 'الاسم بالكامل',
+      'name': 'الاسم',
+      'remember_me': 'تذكرني',
       'forgot_password':
       'هل نسيت كلمة المرور؟',
       'forgot_password_description':
@@ -238,8 +260,7 @@ class LanguageService extends ChangeNotifier {
       'احصل على تجربة الأخبار الكاملة',
       'login_to_save_read':
       'سجل الدخول أو أنشئ حسابًا لحفظ وقراءة المقالات.',
-      'article':
-      'المقال',
+      'article': 'المقال',
       'about_this_story':
       'عن هذا الخبر',
       'story_details':
@@ -290,17 +311,11 @@ class LanguageService extends ChangeNotifier {
       'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.',
       'application_name':
       'تطبيق الأخبار',
-      'technology':
-      'تكنولوجيا',
-      'business':
-      'أعمال',
-      'sports':
-      'رياضة',
-      'health':
-      'صحة',
-      'all':
-      'الكل',
-
+      'technology': 'تكنولوجيا',
+      'business': 'أعمال',
+      'sports': 'رياضة',
+      'health': 'صحة',
+      'all': 'الكل',
       'onboarding_title_1':
       'اكتشف أحدث الأخبار',
       'onboarding_description_1':
@@ -457,7 +472,6 @@ class LanguageService extends ChangeNotifier {
       'Salud',
       'all':
       'Todo',
-
       'onboarding_title_1':
       'Descubre las últimas noticias',
       'onboarding_description_1':
@@ -504,8 +518,7 @@ class LanguageService extends ChangeNotifier {
       'no_news_found':
       'Aucune actualité trouvée',
       'welcome': 'Bienvenue',
-      'welcome_back':
-      'Bon retour',
+      'welcome_back': 'Bon retour',
       'create_account':
       'Créer un compte',
       'create_account_description':
@@ -522,16 +535,12 @@ class LanguageService extends ChangeNotifier {
       'Connexion requise',
       'login_or_register':
       'Connectez-vous ou créez un compte pour continuer.',
-      'email':
-      'E-mail',
-      'password':
-      'Mot de passe',
+      'email': 'E-mail',
+      'password': 'Mot de passe',
       'confirm_password':
       'Confirmer le mot de passe',
-      'full_name':
-      'Nom complet',
-      'name':
-      'Nom',
+      'full_name': 'Nom complet',
+      'name': 'Nom',
       'remember_me':
       'Se souvenir de moi',
       'forgot_password':
@@ -552,8 +561,7 @@ class LanguageService extends ChangeNotifier {
       'Profitez de toute l’expérience News',
       'login_to_save_read':
       'Connectez-vous ou inscrivez-vous pour enregistrer et lire les articles.',
-      'article':
-      'Article',
+      'article': 'Article',
       'about_this_story':
       'À propos de cette actualité',
       'story_details':
@@ -604,17 +612,11 @@ class LanguageService extends ChangeNotifier {
       'Un lien de réinitialisation a été envoyé à votre e-mail.',
       'application_name':
       'News App',
-      'technology':
-      'Technologie',
-      'business':
-      'Affaires',
-      'sports':
-      'Sports',
-      'health':
-      'Santé',
-      'all':
-      'Tout',
-
+      'technology': 'Technologie',
+      'business': 'Affaires',
+      'sports': 'Sports',
+      'health': 'Santé',
+      'all': 'Tout',
       'onboarding_title_1':
       'Découvrez les dernières actualités',
       'onboarding_description_1':
@@ -681,16 +683,13 @@ class LanguageService extends ChangeNotifier {
       'Anmeldung erforderlich',
       'login_or_register':
       'Melde dich an oder erstelle ein Konto, um fortzufahren.',
-      'email':
-      'E-Mail',
-      'password':
-      'Passwort',
+      'email': 'E-Mail',
+      'password': 'Passwort',
       'confirm_password':
       'Passwort bestätigen',
       'full_name':
       'Vollständiger Name',
-      'name':
-      'Name',
+      'name': 'Name',
       'remember_me':
       'Angemeldet bleiben',
       'forgot_password':
@@ -711,8 +710,7 @@ class LanguageService extends ChangeNotifier {
       'Erlebe News vollständig',
       'login_to_save_read':
       'Melde dich an oder registriere dich, um Artikel zu speichern und zu lesen.',
-      'article':
-      'Artikel',
+      'article': 'Artikel',
       'about_this_story':
       'Über diese Nachricht',
       'story_details':
@@ -767,13 +765,9 @@ class LanguageService extends ChangeNotifier {
       'Technologie',
       'business':
       'Geschäft',
-      'sports':
-      'Sport',
-      'health':
-      'Gesundheit',
-      'all':
-      'Alle',
-
+      'sports': 'Sport',
+      'health': 'Gesundheit',
+      'all': 'Alle',
       'onboarding_title_1':
       'Entdecke die neuesten Nachrichten',
       'onboarding_description_1':
@@ -933,7 +927,6 @@ class LanguageService extends ChangeNotifier {
       '健康',
       'all':
       'すべて',
-
       'onboarding_title_1':
       '最新ニュースを発見',
       'onboarding_description_1':
@@ -1093,7 +1086,6 @@ class LanguageService extends ChangeNotifier {
       '健康',
       'all':
       '全部',
-
       'onboarding_title_1':
       '发现最新新闻',
       'onboarding_description_1':

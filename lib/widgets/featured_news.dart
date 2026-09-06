@@ -206,9 +206,7 @@ class FeaturedNews extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
-      onTap: () {
-        _openArticle(context);
-      },
+      onTap: () => _openArticle(context),
       child: Container(
         height: 220,
         width: double.infinity,
@@ -253,7 +251,8 @@ class FeaturedNews extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                    CrossAxisAlignment.start,
                     children: [
                       Text(
                         translateCategory(
@@ -262,7 +261,8 @@ class FeaturedNews extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurfaceVariant,
+                          color:
+                          colorScheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 5),

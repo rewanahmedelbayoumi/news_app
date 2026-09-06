@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "13936767497",
+    "project_id": "news-app-rewan",
+    "storage_bucket": "news-app-rewan.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13936767497:android:d44684b81831a4d4ce7ed8",
+        "android_client_info": {
+          "package_name": "com.example.news_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9LekQKbCja4_1HrUIR4RDysj2j_KnVW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,13 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'firebase_options.dart';
 import 'screens/main_screen.dart';
 import 'screens/splash_screen.dart';
 import 'services/auth_service.dart';
 import 'services/language_service.dart';
 import 'services/theme_service.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const NewsApp());
 }
 
@@ -54,17 +62,14 @@ class _NewsAppState extends State<NewsApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'News App',
-
       locale: Locale(
         languageService.languageCode,
       ),
-
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-
       supportedLocales: const [
         Locale('en'),
         Locale('ar'),
@@ -74,7 +79,6 @@ class _NewsAppState extends State<NewsApp> {
         Locale('ja'),
         Locale('zh'),
       ],
-
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
@@ -84,7 +88,6 @@ class _NewsAppState extends State<NewsApp> {
           brightness: Brightness.light,
         ),
       ),
-
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
@@ -94,11 +97,9 @@ class _NewsAppState extends State<NewsApp> {
           brightness: Brightness.dark,
         ),
       ),
-
       themeMode: themeService.isDarkMode
           ? ThemeMode.dark
           : ThemeMode.light,
-
       home: SplashScreen(
         themeService: themeService,
         authService: authService,

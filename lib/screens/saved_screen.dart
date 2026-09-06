@@ -20,8 +20,41 @@ class SavedScreen extends StatefulWidget {
 }
 
 class _SavedScreenState extends State<SavedScreen> {
+  bool isLoading = true;
+
   String translate(String key) {
     return widget.languageService.translate(key);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadSavedNews();
+  }
+
+  Future<void> _loadSavedNews() async {
+    if (!widget.authService.isLoggedIn) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    await SavedNewsService.loadSavedNews();
+
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -49,21 +82,31 @@ class _SavedScreenState extends State<SavedScreen> {
         ),
         centerTitle: true,
       ),
-      body: savedNews.isEmpty
+      body: isLoading
+          ? Center(
+        child: CircularProgressIndicator(
+          color: colorScheme.onSurface,
+        ),
+      )
+          : savedNews.isEmpty
           ? _buildEmptyState(colorScheme)
-          : ListView.builder(
-        padding: const EdgeInsets.all(20),
-        itemCount: savedNews.length,
-        itemBuilder: (context, index) {
-          return NewsCard(
-            key: ValueKey(
-              savedNews[index].title,
-            ),
-            news: savedNews[index],
-            authService: widget.authService,
-            languageService: widget.languageService,
-          );
-        },
+          : RefreshIndicator(
+        onRefresh: _loadSavedNews,
+        child: ListView.builder(
+          padding: const EdgeInsets.all(20),
+          itemCount: savedNews.length,
+          itemBuilder: (context, index) {
+            return NewsCard(
+              key: ValueKey(
+                savedNews[index].title,
+              ),
+              news: savedNews[index],
+              authService: widget.authService,
+              languageService:
+              widget.languageService,
+            );
+          },
+        ),
       ),
     );
   }
