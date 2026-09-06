@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,8 @@ class AuthService extends ChangeNotifier {
   static const String _rememberMeKey = 'remember_me';
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore =
+      FirebaseFirestore.instance;
 
   StreamSubscription<User?>? _authSubscription;
 
@@ -47,7 +50,8 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> initializeSession() async {
-    final preferences = await SharedPreferences.getInstance();
+    final preferences =
+    await SharedPreferences.getInstance();
 
     final rememberMe =
         preferences.getBool(_rememberMeKey) ?? false;
@@ -65,9 +69,16 @@ class AuthService extends ChangeNotifier {
     required String password,
   }) async {
     try {
+      final String newName = name.trim();
+      final String newEmail = email.trim();
+
+      if (newName.isEmpty || newEmail.isEmpty) {
+        return 'Please fill in all fields.';
+      }
+
       final UserCredential credential =
       await _auth.createUserWithEmailAndPassword(
-        email: email.trim(),
+        email: newEmail,
         password: password,
       );
 
@@ -77,11 +88,28 @@ class AuthService extends ChangeNotifier {
         return 'Registration failed.';
       }
 
-      await user.updateDisplayName(name.trim());
+      await user.updateDisplayName(newName);
 
       await user.reload();
 
-      _updateUser(_auth.currentUser);
+      final User? updatedUser = _auth.currentUser;
+
+      if (updatedUser == null) {
+        return 'Registration failed.';
+      }
+
+      await _firestore
+          .collection('users')
+          .doc(updatedUser.uid)
+          .set({
+        'uid': updatedUser.uid,
+        'name': newName,
+        'email': newEmail,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      _updateUser(updatedUser);
 
       return null;
     } on FirebaseAuthException catch (e) {
@@ -195,7 +223,23 @@ class AuthService extends ChangeNotifier {
 
       await user.reload();
 
-      _updateUser(_auth.currentUser);
+      final User? updatedUser = _auth.currentUser;
+
+      if (updatedUser == null) {
+        return 'Profile update failed.';
+      }
+
+      await _firestore
+          .collection('users')
+          .doc(updatedUser.uid)
+          .set({
+        'uid': updatedUser.uid,
+        'name': newName,
+        'email': newEmail,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      _updateUser(updatedUser);
 
       return null;
     } on FirebaseAuthException catch (e) {
