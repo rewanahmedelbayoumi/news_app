@@ -3,6 +3,15 @@ import '../models/news_model.dart';
 class NewsData {
   static const List<NewsModel> news = [
     NewsModel(
+      category: 'News',
+      title:
+      '40-year-old man falls 200 feet to his death while canyoneering at national park',
+      description:
+      'A 40-year-old man died after falling approximately 200 feet while canyoneering at a national park.',
+      time: '1 hour ago',
+      image: 'assets/images/canyoneering.png',
+    ),
+    NewsModel(
       category: 'Technology',
       title: 'The Future of Technology Is Changing Fast',
       description:

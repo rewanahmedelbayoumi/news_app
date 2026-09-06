@@ -113,8 +113,7 @@ class _NewsCardState extends State<NewsCard> {
                   width: 45,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: colorScheme.onSurfaceVariant
-                        .withOpacity(0.3),
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -256,14 +255,37 @@ class _NewsCardState extends State<NewsCard> {
                     error,
                     stackTrace,
                     ) {
+                  debugPrint(
+                    'IMAGE ERROR: ${widget.news.image}',
+                  );
+                  debugPrint(
+                    'ERROR DETAILS: $error',
+                  );
+                  debugPrint(
+                    'STACK TRACE: $stackTrace',
+                  );
+
                   return Container(
                     width: 110,
                     height: 110,
                     color: colorScheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.image_outlined,
-                      size: 35,
-                      color: colorScheme.onSurfaceVariant,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.broken_image_outlined,
+                          size: 32,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'Image Error',
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -289,9 +311,7 @@ class _NewsCardState extends State<NewsCard> {
                         ),
                       ),
                       IconButton(
-                        onPressed: isSaving
-                            ? null
-                            : _toggleSaved,
+                        onPressed: isSaving ? null : _toggleSaved,
                         icon: isSaving
                             ? SizedBox(
                           width: 20,
